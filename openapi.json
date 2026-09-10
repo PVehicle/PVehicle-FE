@@ -225,7 +225,7 @@
       "get": {
         "tags": ["cars"],
         "summary": "Tra cuu thong so mot dong xe",
-        "description": "Tra cuu thong so theo ten lop day du.\n\nVi du: `Tesla Model S Sedan 2012`",
+        "description": "Tra cuu thong so theo ten lop day du.\n\nVi du: `Tesla Model S Sedan`. Luu y phan lon ten KHONG co nam o cuoi;\nchi mot so dong xe co nhieu doi moi kem nam, vi du\n`Ford F-150 Regular Cab 2012`. Hay dung dung `class_name` lay tu API.",
         "operationId": "get_car_api_v1_cars__class_name__get",
         "security": [{ "APIKeyHeader": [] }],
         "parameters": [

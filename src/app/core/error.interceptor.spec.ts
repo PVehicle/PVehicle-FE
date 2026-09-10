@@ -50,6 +50,21 @@ describe('toAppError', () => {
     );
   });
 
+  it('doc duoc loi 422 that cua backend (detail dang chuoi)', () => {
+    // Kiem chung voi backend that: FastAPI khai bao `detail` la mang, nhung
+    // handler cua PVehicle-AI gop lai thanh chuoi tieng Viet kem request_id.
+    const body = {
+      detail:
+        'Du lieu gui len khong hop le. limit: Input should be less than ' +
+        'or equal to 200',
+      request_id: '76dc1509a088',
+    };
+
+    const result = toAppError(makeError(422, body));
+    expect(result.message).toBe(body.detail);
+    expect(result.requestId).toBe('76dc1509a088');
+  });
+
   it('lay request id tu header X-Request-ID', () => {
     const error = makeError(500, null, { 'X-Request-ID': 'a1b2c3d4e5f6' });
     expect(toAppError(error).requestId).toBe('a1b2c3d4e5f6');

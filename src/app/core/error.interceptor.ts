@@ -43,11 +43,14 @@ function isValidationDetail(value: unknown): value is ValidationDetail {
 /**
  * Doc truong `detail` trong body loi.
  *
- * Backend tra ve HAI dang khac nhau:
- * - Loi nghiep vu (400/404/413/415/503): `detail` la chuoi.
- * - Loi validation (422): `detail` la mang `ValidationError[]`.
+ * Da kiem chung voi backend that: moi loi - ke ca 422 - deu tra `detail`
+ * dang chuoi tieng Viet kem `request_id`. Vi du:
+ *   "Du lieu gui len khong hop le. limit: Input should be <= 200"
  *
- * Neu gia dinh luon la chuoi thi giao dien se hien `[object Object]`.
+ * Nhanh doc mang van giu lai vi `openapi.json` khai bao
+ * `HTTPValidationError.detail` la `ValidationError[]` (mac dinh cua
+ * FastAPI). Neu handler tuy chinh bi go bo, giao dien se hien
+ * `[object Object]` thay vi thong bao that.
  */
 function readDetail(body: unknown): string | null {
   if (typeof body !== 'object' || body === null || !('detail' in body)) {

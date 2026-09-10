@@ -220,6 +220,13 @@ GET /api/v1/cars/{class_name}/similar?top_n=5
 
 `class_name` chứa dấu cách → phải `encodeURIComponent()`.
 
+> **`class_name` phần lớn KHÔNG có năm ở cuối.** Ví dụ `Tesla Model S Sedan`,
+> `Toyota Camry Sedan` — chỉ một số dòng có nhiều đời mới kèm năm, như
+> `Ford F-150 Regular Cab 2012`. Luôn dùng đúng `class_name` lấy từ API, đừng
+> tự ghép thêm năm. Một số tên còn chứa dấu chấm hoặc gạch ngang
+> (`Bugatti Veyron 16.4 Convertible`, `Acura TL Type-S`) —
+> `encodeURIComponent()` xử lý được cả hai.
+
 ### 3.3. Tư vấn theo nhu cầu
 
 ```http
