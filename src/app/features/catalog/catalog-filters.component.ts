@@ -50,7 +50,7 @@ import type { CatalogFilters } from './catalog.store';
       </div>
 
       @if (hasFilters()) {
-        <button type="button" class="clear" (click)="cleared.emit()">
+        <button type="button" class="app-btn app-btn--ghost clear" (click)="cleared.emit()">
           Xóa bộ lọc
         </button>
       }
@@ -67,37 +67,56 @@ import type { CatalogFilters } from './catalog.store';
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
       align-items: end;
-      gap: 0.75rem;
-      margin: 1rem 0;
+      gap: 0.85rem;
+      margin: 1.25rem 0;
+      padding: 1.1rem;
+      border: 1px solid var(--mat-sys-outline-variant);
+      border-radius: var(--app-radius-lg);
+      background: var(--mat-sys-surface-container-low);
+      animation: app-fade-in-up var(--app-duration) var(--app-ease) both;
     }
 
     .field {
       display: flex;
       flex-direction: column;
-      gap: 0.25rem;
+      gap: 0.35rem;
     }
 
     label {
       font: var(--mat-sys-label-medium);
       color: var(--mat-sys-on-surface-variant);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
     }
 
     input,
     select {
-      padding: 0.5rem;
-      border: 1px solid var(--mat-sys-outline);
-      border-radius: 0.5rem;
+      padding: 0.55rem 0.85rem;
+      border: 1px solid var(--mat-sys-outline-variant);
+      border-radius: var(--app-radius-sm);
       background: var(--mat-sys-surface);
       color: var(--mat-sys-on-surface);
+      font: var(--mat-sys-body-medium);
+      transition:
+        border-color var(--app-duration-fast) var(--app-ease),
+        box-shadow var(--app-duration-fast) var(--app-ease);
+    }
+
+    input:hover,
+    select:hover {
+      border-color: color-mix(in srgb, var(--mat-sys-primary) 50%, transparent);
+    }
+
+    input:focus,
+    select:focus {
+      outline: none;
+      border-color: var(--mat-sys-primary);
+      box-shadow: 0 0 0 3px
+        color-mix(in srgb, var(--mat-sys-primary) 18%, transparent);
     }
 
     .clear {
-      padding: 0.5rem 1rem;
-      border: 1px solid var(--mat-sys-outline);
-      border-radius: 999px;
-      background: transparent;
-      color: var(--mat-sys-on-surface);
-      cursor: pointer;
+      animation: app-pop-in var(--app-duration) var(--app-spring) both;
     }
 
     .error {

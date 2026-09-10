@@ -19,7 +19,7 @@ import type { CatalogFilters } from './catalog.store';
   ],
   template: `
     <section class="page">
-      <h1>Danh mục xe</h1>
+      <h1 class="app-enter">Danh mục xe</h1>
 
       <app-catalog-filters
         [filters]="store.filters()"
@@ -32,7 +32,11 @@ import type { CatalogFilters } from './catalog.store';
       }
 
       @if (store.loading()) {
-        <p class="notice" role="status">Đang tải danh mục...</p>
+        <div class="skeleton-grid" role="status" aria-label="Đang tải danh mục">
+          @for (item of skeletonRows; track item) {
+            <div class="app-skeleton skeleton-card"></div>
+          }
+        </div>
       }
 
       @if (store.isEmpty() && !store.error()) {
@@ -46,7 +50,7 @@ import type { CatalogFilters } from './catalog.store';
           }}
         </p>
 
-        <ul class="grid">
+        <ul class="grid app-stagger">
           @for (car of store.cars(); track car.class_name) {
             <li>
               <a
@@ -62,9 +66,10 @@ import type { CatalogFilters } from './catalog.store';
         <nav class="pagination" aria-label="Phân trang danh mục">
           <button
             type="button"
+            class="app-btn app-btn--ghost"
             [disabled]="!store.hasPrevious()"
             (click)="store.previousPage()">
-            Trang trước
+            ← Trang trước
           </button>
 
           <span aria-live="polite">
@@ -73,9 +78,10 @@ import type { CatalogFilters } from './catalog.store';
 
           <button
             type="button"
+            class="app-btn app-btn--ghost"
             [disabled]="!store.hasNext()"
             (click)="store.nextPage()">
-            Trang sau
+            Trang sau →
           </button>
         </nav>
       }
@@ -85,14 +91,18 @@ import type { CatalogFilters } from './catalog.store';
     .page {
       max-width: 72rem;
       margin: 0 auto;
-      padding: 1rem;
+      padding: 1.5rem 1rem 4rem;
     }
 
     h1 {
-      font: var(--mat-sys-headline-small);
+      margin: 0 0 0.5rem;
+      font: var(--mat-sys-headline-medium);
+      font-weight: 700;
+      letter-spacing: -0.02em;
     }
 
     .summary {
+      margin: 0 0 1rem;
       color: var(--mat-sys-on-surface-variant);
       font: var(--mat-sys-body-small);
     }
@@ -100,7 +110,7 @@ import type { CatalogFilters } from './catalog.store';
     .grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr));
-      gap: 0.75rem;
+      gap: 0.85rem;
       margin: 1rem 0;
       padding: 0;
       list-style: none;
@@ -110,12 +120,23 @@ import type { CatalogFilters } from './catalog.store';
       display: block;
       color: inherit;
       text-decoration: none;
-      border-radius: 0.75rem;
+      border-radius: var(--app-radius-lg);
     }
 
-    .card-link:hover app-car-card {
-      border-color: var(--mat-sys-primary);
+    // --- Skeleton luc dang tai ------------------------------------------
+
+    .skeleton-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr));
+      gap: 0.85rem;
+      margin: 1rem 0;
     }
+
+    .skeleton-card {
+      height: 11rem;
+    }
+
+    // --- Phan trang ------------------------------------------------------
 
     .pagination {
       display: flex;
@@ -123,42 +144,41 @@ import type { CatalogFilters } from './catalog.store';
       align-items: center;
       justify-content: center;
       gap: 1rem;
-      margin-top: 1.5rem;
+      margin-top: 2rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--mat-sys-outline-variant);
     }
 
-    .pagination button {
-      padding: 0.5rem 1rem;
-      border: 1px solid var(--mat-sys-outline);
-      border-radius: 999px;
-      background: transparent;
-      color: var(--mat-sys-on-surface);
-      cursor: pointer;
-    }
-
-    .pagination button:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
+    .pagination span {
+      color: var(--mat-sys-on-surface-variant);
+      font: var(--mat-sys-label-large);
+      font-variant-numeric: tabular-nums;
     }
 
     .notice,
     .error {
-      padding: 0.75rem;
-      border-radius: 0.5rem;
+      padding: 0.85rem 1rem;
+      border-radius: var(--app-radius-md);
     }
 
     .notice {
-      background: var(--mat-sys-surface-variant);
+      background: var(--mat-sys-surface-container);
     }
 
     .error {
+      border-left: 3px solid var(--mat-sys-error);
       background: var(--mat-sys-error-container);
       color: var(--mat-sys-on-error-container);
+      animation: app-fade-in-up var(--app-duration) var(--app-ease) both;
     }
   `,
 })
 export class CatalogPage implements OnInit {
   protected readonly store = inject(CatalogStore);
   private readonly filtersStore = inject(FiltersStore);
+
+  /** Sáu ô xám lấp chỗ trong lúc chờ dữ liệu. */
+  protected readonly skeletonRows = [0, 1, 2, 3, 4, 5];
 
   protected readonly emptyHints = [
     'Danh mục hiện chưa có dữ liệu, thử tải lại trang',

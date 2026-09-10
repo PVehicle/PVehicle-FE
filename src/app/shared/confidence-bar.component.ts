@@ -28,21 +28,39 @@ const LOW_CONFIDENCE = 0.15;
   `,
   styles: `
     .track {
-      height: 0.5rem;
+      position: relative;
+      height: 0.55rem;
       overflow: hidden;
-      background: var(--mat-sys-surface-variant);
-      border-radius: 999px;
+      background: var(--mat-sys-surface-container-high);
+      border-radius: var(--app-radius-pill);
     }
 
     .fill {
       height: 100%;
-      border-radius: 999px;
-      transition: width 200ms ease-out;
+      border-radius: var(--app-radius-pill);
+      // Thanh chay tu 0 den gia tri that khi xuat hien.
+      animation: bar-grow var(--app-duration-slow) var(--app-ease) both;
+      transition: width var(--app-duration) var(--app-ease);
+    }
+
+    @keyframes bar-grow {
+      from {
+        transform: scaleX(0);
+        transform-origin: left;
+      }
+      to {
+        transform: scaleX(1);
+        transform-origin: left;
+      }
     }
 
     // Mau di kem chu o component cha, khong dung mau lam tin hieu duy nhat.
     .fill.high {
-      background: var(--mat-sys-primary);
+      background: linear-gradient(
+        90deg,
+        var(--mat-sys-primary),
+        color-mix(in srgb, var(--mat-sys-tertiary) 70%, var(--mat-sys-primary))
+      );
     }
 
     .fill.medium {

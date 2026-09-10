@@ -18,6 +18,40 @@ html {
   );
 }
 
+// ---------------------------------------------------------------------------
+// Design tokens dung chung cho toan bo ung dung
+// ---------------------------------------------------------------------------
+
+:root {
+  // Bo goc - tang dan theo kich thuoc thanh phan.
+  --app-radius-sm: 0.5rem;
+  --app-radius-md: 0.75rem;
+  --app-radius-lg: 1.25rem;
+  --app-radius-pill: 999px;
+
+  // Do sau - dung mau trung tinh de hoat dong tren ca nen sang va toi.
+  --app-shadow-sm: 0 1px 2px rgb(0 0 0 / 8%), 0 1px 3px rgb(0 0 0 / 6%);
+  --app-shadow-md: 0 4px 12px rgb(0 0 0 / 10%), 0 2px 4px rgb(0 0 0 / 6%);
+  --app-shadow-lg: 0 12px 32px rgb(0 0 0 / 16%), 0 4px 8px rgb(0 0 0 / 8%);
+
+  // Duong cong chuyen dong.
+  // `ease-out` cho thanh phan xuat hien, `spring` cho tuong tac cua nguoi
+  // dung vi no co do nay nhe, tao cam giac phan hoi.
+  --app-ease: cubic-bezier(0.32, 0.72, 0, 1);
+  --app-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  --app-duration-fast: 140ms;
+  --app-duration: 240ms;
+  --app-duration-slow: 420ms;
+
+  // Nen chuyen sac cho cac khu vuc can noi bat.
+  --app-gradient: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--mat-sys-primary) 12%, transparent),
+    color-mix(in srgb, var(--mat-sys-tertiary) 8%, transparent)
+  );
+}
+
 body {
   // `light dark` de Material bam theo `prefers-color-scheme` cua he dieu
   // hanh. Nut chuyen chu de se ghi de bang thuoc tinh `data-theme` ben duoi.
@@ -28,7 +62,12 @@ body {
   font: var(--mat-sys-body-medium);
 
   margin: 0;
-  height: 100%;
+  min-height: 100%;
+
+  // Doi mau muot khi nguoi dung chuyen chu de.
+  transition:
+    background-color var(--app-duration) var(--app-ease),
+    color var(--app-duration) var(--app-ease);
 }
 
 // Nguoi dung chon chu de thu cong - ghi de lua chon cua he dieu hanh.
@@ -40,8 +79,210 @@ html[data-theme='dark'] body {
   color-scheme: dark;
 }
 
-// WCAG 2.2 AA: vien focus phai nhin thay ro khi dieu huong bang ban phim.
+// ---------------------------------------------------------------------------
+// Anh sang nen - tao chieu sau cho trang thay vi mot mang mau phang
+// ---------------------------------------------------------------------------
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      60rem 40rem at 15% -10%,
+      color-mix(in srgb, var(--mat-sys-primary) 10%, transparent),
+      transparent
+    ),
+    radial-gradient(
+      50rem 35rem at 100% 0%,
+      color-mix(in srgb, var(--mat-sys-tertiary) 8%, transparent),
+      transparent
+    );
+}
+
+// ---------------------------------------------------------------------------
+// WCAG 2.2 AA: vien focus phai nhin thay ro khi dieu huong bang ban phim
+// ---------------------------------------------------------------------------
+
 :focus-visible {
   outline: 2px solid var(--mat-sys-primary);
-  outline-offset: 2px;
+  outline-offset: 3px;
+  border-radius: var(--app-radius-sm);
+}
+
+// ---------------------------------------------------------------------------
+// Animation dung chung
+// ---------------------------------------------------------------------------
+
+@keyframes app-fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(0.75rem);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes app-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes app-pop-in {
+  from {
+    opacity: 0;
+    transform: scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/// Vet sang chay ngang, dung cho skeleton luc dang tai.
+@keyframes app-shimmer {
+  from {
+    background-position: -150% 0;
+  }
+  to {
+    background-position: 250% 0;
+  }
+}
+
+@keyframes app-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/// Nhip dap nhe, danh cho vien vung tha anh khi dang keo file vao.
+@keyframes app-pulse-ring {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--mat-sys-primary) 35%, transparent);
+  }
+  50% {
+    box-shadow: 0 0 0 0.6rem transparent;
+  }
+}
+
+.app-enter {
+  animation: app-fade-in-up var(--app-duration-slow) var(--app-ease) both;
+}
+
+/// Danh sach hien lan luot thay vi bat ra cung luc.
+/// Chi lam voi 12 phan tu dau - sau do do tre da du lau, them nua chi khien
+/// nguoi dung phai cho.
+@for $i from 1 through 12 {
+  .app-stagger > *:nth-child(#{$i}) {
+    animation: app-fade-in-up var(--app-duration) var(--app-ease) both;
+    animation-delay: #{$i * 40}ms;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Thanh phan dung chung
+// ---------------------------------------------------------------------------
+
+/// Nut co nen dac - dung cho hanh dong chinh cua moi trang.
+.app-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.25rem;
+  border: 1px solid transparent;
+  border-radius: var(--app-radius-pill);
+  background: var(--mat-sys-surface-container-high);
+  color: var(--mat-sys-on-surface);
+  font: var(--mat-sys-label-large);
+  cursor: pointer;
+  transition:
+    transform var(--app-duration-fast) var(--app-spring),
+    background-color var(--app-duration-fast) var(--app-ease),
+    box-shadow var(--app-duration-fast) var(--app-ease);
+}
+
+.app-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: var(--app-shadow-md);
+}
+
+.app-btn:active:not(:disabled) {
+  transform: translateY(0) scale(0.97);
+}
+
+.app-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.app-btn--primary {
+  background: var(--mat-sys-primary);
+  color: var(--mat-sys-on-primary);
+}
+
+.app-btn--ghost {
+  background: transparent;
+  border-color: var(--mat-sys-outline-variant);
+}
+
+.app-btn--ghost:hover:not(:disabled) {
+  background: var(--mat-sys-surface-container);
+  border-color: var(--mat-sys-primary);
+}
+
+/// Vong xoay nho gan trong nut khi dang xu ly.
+.app-spinner {
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid currentcolor;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: app-spin 700ms linear infinite;
+}
+
+/// Khoi xam nhap nhay thay cho noi dung chua tai xong.
+.app-skeleton {
+  border-radius: var(--app-radius-md);
+  background: linear-gradient(
+      90deg,
+      transparent 0%,
+      color-mix(in srgb, var(--mat-sys-on-surface) 8%, transparent) 50%,
+      transparent 100%
+    ),
+    var(--mat-sys-surface-container);
+  background-size: 200% 100%;
+  animation: app-shimmer 1.4s ease-in-out infinite;
+}
+
+/// Khung noi dung co nen va vien nhe.
+.app-panel {
+  padding: 1rem;
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: var(--app-radius-lg);
+  background: var(--mat-sys-surface-container-low);
+}
+
+// ---------------------------------------------------------------------------
+// Ton trong lua chon giam chuyen dong cua nguoi dung
+// ---------------------------------------------------------------------------
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

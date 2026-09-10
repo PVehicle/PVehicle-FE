@@ -30,9 +30,9 @@ import { CarDetailStore } from './car-detail.store';
       }
 
       @if (store.car(); as car) {
-        <h1>{{ car.class_name }}</h1>
+        <h1 class="app-enter">{{ car.class_name }}</h1>
 
-        <dl class="specs">
+        <dl class="specs app-enter">
           <div>
             <dt>Hãng</dt>
             <dd>{{ car.brand }}</dd>
@@ -70,7 +70,7 @@ import { CarDetailStore } from './car-detail.store';
 
         @if (store.similarCars().length > 0) {
           <h2>Xe tương tự</h2>
-          <ul class="grid">
+          <ul class="grid app-stagger">
             @for (similar of store.similarCars(); track similar.class_name) {
               <li>
                 <a
@@ -90,42 +90,82 @@ import { CarDetailStore } from './car-detail.store';
     .page {
       max-width: 72rem;
       margin: 0 auto;
-      padding: 1rem;
+      padding: 1.5rem 1rem 4rem;
+    }
+
+    .breadcrumb {
+      margin-bottom: 1rem;
     }
 
     .breadcrumb a {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.35rem 0.8rem;
+      border-radius: var(--app-radius-pill);
       color: var(--mat-sys-primary);
+      text-decoration: none;
+      font: var(--mat-sys-label-large);
+      transition:
+        background-color var(--app-duration-fast) var(--app-ease),
+        transform var(--app-duration-fast) var(--app-spring);
+    }
+
+    .breadcrumb a:hover {
+      background: var(--mat-sys-surface-container);
+      transform: translateX(-3px);
     }
 
     h1 {
-      font: var(--mat-sys-headline-small);
+      margin: 0 0 1.25rem;
+      font: var(--mat-sys-headline-medium);
+      font-weight: 700;
+      letter-spacing: -0.02em;
     }
 
     h2 {
-      margin-top: 2rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      margin: 2.5rem 0 1rem;
       font: var(--mat-sys-title-medium);
+      font-weight: 650;
+    }
+
+    h2::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--mat-sys-outline-variant);
     }
 
     .specs {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
-      gap: 0.75rem 1.5rem;
-      margin: 1rem 0;
+      gap: 1rem 1.5rem;
+      margin: 0 0 1rem;
+      padding: 1.25rem;
+      border: 1px solid var(--mat-sys-outline-variant);
+      border-radius: var(--app-radius-lg);
+      background: var(--app-gradient), var(--mat-sys-surface-container-low);
     }
 
     .specs div {
       display: flex;
       flex-direction: column;
+      gap: 0.15rem;
     }
 
     dt {
       font: var(--mat-sys-label-small);
       color: var(--mat-sys-on-surface-variant);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
     }
 
     dd {
       margin: 0;
       font: var(--mat-sys-body-large);
+      font-weight: 600;
     }
 
     .note {
@@ -136,7 +176,7 @@ import { CarDetailStore } from './car-detail.store';
     .grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr));
-      gap: 0.75rem;
+      gap: 0.85rem;
       padding: 0;
       list-style: none;
     }
@@ -145,26 +185,24 @@ import { CarDetailStore } from './car-detail.store';
       display: block;
       color: inherit;
       text-decoration: none;
-      border-radius: 0.75rem;
-    }
-
-    .card-link:hover app-car-card {
-      border-color: var(--mat-sys-primary);
+      border-radius: var(--app-radius-lg);
     }
 
     .notice,
     .error {
-      padding: 0.75rem;
-      border-radius: 0.5rem;
+      padding: 0.85rem 1rem;
+      border-radius: var(--app-radius-md);
     }
 
     .notice {
-      background: var(--mat-sys-surface-variant);
+      background: var(--mat-sys-surface-container);
     }
 
     .error {
+      border-left: 3px solid var(--mat-sys-error);
       background: var(--mat-sys-error-container);
       color: var(--mat-sys-on-error-container);
+      animation: app-fade-in-up var(--app-duration) var(--app-ease) both;
     }
   `,
 })

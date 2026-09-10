@@ -33,7 +33,7 @@ const SOURCE_LABEL: Record<string, string> = {
     </p>
 
     <h3>Các khả năng</h3>
-    <ol class="predictions">
+    <ol class="predictions app-stagger">
       @for (prediction of vehicle().predictions; track prediction.class_name) {
         <li>
           <span class="label">{{ prediction.class_name }}</span>
@@ -60,7 +60,7 @@ const SOURCE_LABEL: Record<string, string> = {
 
     @if (similarCars().length > 0) {
       <h3>Xe tương tự</h3>
-      <div class="similar">
+      <div class="similar app-stagger">
         @for (car of similarCars(); track car.class_name) {
           <app-car-card [car]="car" />
         }
@@ -69,10 +69,12 @@ const SOURCE_LABEL: Record<string, string> = {
   `,
   styles: `
     .warning {
-      padding: 0.75rem;
-      border-radius: 0.5rem;
+      padding: 0.85rem 1rem;
+      border-left: 3px solid var(--mat-sys-error);
+      border-radius: var(--app-radius-md);
       background: var(--mat-sys-error-container);
       color: var(--mat-sys-on-error-container);
+      animation: app-fade-in-up var(--app-duration) var(--app-ease) both;
     }
 
     .source,
@@ -82,8 +84,21 @@ const SOURCE_LABEL: Record<string, string> = {
     }
 
     h3 {
-      margin: 1.5rem 0 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      margin: 1.75rem 0 0.75rem;
       font: var(--mat-sys-title-small);
+      font-weight: 650;
+      letter-spacing: -0.01em;
+    }
+
+    // Vach ngang keo dai het phan con lai cua dong tieu de.
+    h3::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--mat-sys-outline-variant);
     }
 
     .predictions {
@@ -94,21 +109,33 @@ const SOURCE_LABEL: Record<string, string> = {
 
     .predictions li {
       display: grid;
-      grid-template-columns: 1fr 6rem 3.5rem;
+      grid-template-columns: 1fr 7rem 3.5rem;
       align-items: center;
-      gap: 0.75rem;
-      padding: 0.35rem 0;
+      gap: 0.85rem;
+      padding: 0.5rem 0.6rem;
+      border-radius: var(--app-radius-sm);
+      transition: background-color var(--app-duration-fast) var(--app-ease);
+    }
+
+    .predictions li:hover {
+      background: var(--mat-sys-surface-container);
+    }
+
+    // Kha nang cao nhat duoc lam noi bat.
+    .predictions li:first-child .label {
+      font-weight: 650;
     }
 
     .value {
       text-align: right;
       font-variant-numeric: tabular-nums;
+      font-weight: 600;
     }
 
     .similar {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
-      gap: 0.75rem;
+      gap: 0.85rem;
     }
 
     // Man hinh hep: cho ten xuong dong rieng de thanh xac suat con cho.

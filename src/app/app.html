@@ -1,16 +1,33 @@
 <a class="skip-link" href="#main-content">Bỏ qua điều hướng</a>
 
 <header class="app-header">
+  <a class="brand" routerLink="/nhan-dien" aria-label="PVehicle - trang chủ">
+    <span class="brand-mark" aria-hidden="true">
+      <svg viewBox="0 0 24 24" width="18" height="18">
+        <path
+          fill="currentColor"
+          d="M5 15h14v-2.3l-1.3-3.9A2 2 0 0 0 15.8 7H8.2a2 2 0 0 0-1.9 1.3L5 12.2V15Zm2.6-6h8.8l1 3H6.6l1-3ZM6 16.5a1.2 1.2 0 1 0 0 2.4 1.2 1.2 0 0 0 0-2.4Zm12 0a1.2 1.2 0 1 0 0 2.4 1.2 1.2 0 0 0 0-2.4Z" />
+      </svg>
+    </span>
+    <span class="brand-name">PVehicle</span>
+  </a>
+
   <nav aria-label="Điều hướng chính">
     <ul>
       <li>
-        <a routerLink="/nhan-dien" routerLinkActive="active">Nhận diện</a>
+        <a routerLink="/nhan-dien" routerLinkActive="active">
+          <span>Nhận diện</span>
+        </a>
       </li>
       <li>
-        <a routerLink="/tu-van" routerLinkActive="active">Tư vấn</a>
+        <a routerLink="/tu-van" routerLinkActive="active">
+          <span>Tư vấn</span>
+        </a>
       </li>
       <li>
-        <a routerLink="/danh-muc" routerLinkActive="active">Danh mục</a>
+        <a routerLink="/danh-muc" routerLinkActive="active">
+          <span>Danh mục</span>
+        </a>
       </li>
     </ul>
   </nav>
@@ -22,7 +39,24 @@
     [attr.aria-label]="
       theme() === 'dark' ? 'Chuyển sang chủ đề sáng' : 'Chuyển sang chủ đề tối'
     ">
-    {{ theme() === 'dark' ? 'Sáng' : 'Tối' }}
+    <span class="icon" aria-hidden="true">
+      @if (theme() === 'dark') {
+        <svg viewBox="0 0 24 24" width="16" height="16">
+          <circle cx="12" cy="12" r="4.2" fill="currentColor" />
+          <g stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+            <path d="M12 3v2M12 19v2M3 12h2M19 12h2" />
+            <path d="M5.6 5.6 7 7M17 17l1.4 1.4M18.4 5.6 17 7M7 17l-1.4 1.4" />
+          </g>
+        </svg>
+      } @else {
+        <svg viewBox="0 0 24 24" width="16" height="16">
+          <path
+            fill="currentColor"
+            d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5Z" />
+        </svg>
+      }
+    </span>
+    <span class="label">{{ theme() === 'dark' ? 'Sáng' : 'Tối' }}</span>
   </button>
 </header>
 

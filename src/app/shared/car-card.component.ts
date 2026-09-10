@@ -59,43 +59,85 @@ const SEGMENT_LABEL: Record<string, string> = {
   `,
   styles: `
     :host {
+      position: relative;
       display: block;
-      padding: 1rem;
+      padding: 1.1rem;
+      overflow: hidden;
       border: 1px solid var(--mat-sys-outline-variant);
-      border-radius: 0.75rem;
+      border-radius: var(--app-radius-lg);
+      background: var(--mat-sys-surface-container-low);
+      transition:
+        transform var(--app-duration) var(--app-spring),
+        border-color var(--app-duration) var(--app-ease),
+        box-shadow var(--app-duration) var(--app-ease);
+    }
+
+    :host:hover {
+      transform: translateY(-3px);
+      border-color: color-mix(in srgb, var(--mat-sys-primary) 45%, transparent);
+      box-shadow: var(--app-shadow-md);
+    }
+
+    // Vach mau doc ben trai, hien ra khi ro chuot vao the.
+    :host::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background: var(--mat-sys-primary);
+      transform: scaleY(0);
+      transform-origin: center;
+      transition: transform var(--app-duration) var(--app-ease);
+    }
+
+    :host:hover::before {
+      transform: scaleY(1);
     }
 
     .name {
-      margin: 0 0 0.75rem;
+      margin: 0 0 0.85rem;
       font: var(--mat-sys-title-small);
+      font-weight: 650;
+      letter-spacing: -0.01em;
     }
 
     .specs {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(7rem, 1fr));
-      gap: 0.5rem 1rem;
+      gap: 0.65rem 1rem;
       margin: 0;
     }
 
     .specs div {
       display: flex;
       flex-direction: column;
+      gap: 0.1rem;
     }
 
     dt {
       font: var(--mat-sys-label-small);
       color: var(--mat-sys-on-surface-variant);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
     }
 
     dd {
       margin: 0;
       font: var(--mat-sys-body-medium);
+      font-weight: 550;
     }
 
     .score {
-      margin: 0.75rem 0 0;
+      display: inline-block;
+      margin: 0.9rem 0 0;
+      padding: 0.25rem 0.7rem;
+      border-radius: var(--app-radius-pill);
+      background: color-mix(in srgb, var(--mat-sys-primary) 14%, transparent);
+      color: var(--mat-sys-primary);
       font: var(--mat-sys-label-medium);
-      color: var(--mat-sys-on-surface-variant);
+      font-weight: 600;
     }
   `,
 })

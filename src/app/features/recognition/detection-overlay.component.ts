@@ -56,6 +56,10 @@ import type { DetectedVehicle } from '../../core/models';
       position: relative;
       display: inline-block;
       max-width: 100%;
+      overflow: hidden;
+      border-radius: var(--app-radius-lg);
+      box-shadow: var(--app-shadow-lg);
+      animation: app-pop-in var(--app-duration-slow) var(--app-ease) both;
     }
 
     img {
@@ -75,17 +79,34 @@ import type { DetectedVehicle } from '../../core/models';
 
     .box {
       fill: transparent;
-      stroke: var(--mat-sys-outline);
+      stroke: rgb(255 255 255 / 75%);
       // Giu net vien khong bi keo gian theo ty le cua viewBox.
       vector-effect: non-scaling-stroke;
       stroke-width: 2;
       cursor: pointer;
       pointer-events: all;
+      transition:
+        stroke var(--app-duration) var(--app-ease),
+        stroke-width var(--app-duration) var(--app-ease);
+    }
+
+    .box:hover {
+      stroke: var(--mat-sys-primary);
+      stroke-width: 3;
     }
 
     .box.selected {
       stroke: var(--mat-sys-primary);
       stroke-width: 4;
+      // Vien dut chay quanh khung dang chon.
+      stroke-dasharray: 12 6;
+      animation: box-march 1.2s linear infinite;
+    }
+
+    @keyframes box-march {
+      to {
+        stroke-dashoffset: -18;
+      }
     }
   `,
 })

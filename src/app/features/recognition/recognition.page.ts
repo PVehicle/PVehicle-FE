@@ -18,7 +18,7 @@ import { RecognitionStore } from './recognition.store';
   ],
   template: `
     <section class="page">
-      <h1>Nhận diện xe</h1>
+      <h1 class="app-enter">Nhận diện xe</h1>
 
       @if (!health.canRecognize()) {
         <p class="notice" role="status">
@@ -37,11 +37,19 @@ import { RecognitionStore } from './recognition.store';
         <div class="actions">
           <button
             type="button"
+            class="app-btn app-btn--primary"
             [disabled]="!store.canSubmit() || !health.canRecognize()"
             (click)="onRecognize()">
-            {{ store.loading() ? 'Đang nhận diện...' : 'Nhận diện' }}
+            @if (store.loading()) {
+              <span class="app-spinner" aria-hidden="true"></span>
+              <span>Đang nhận diện</span>
+            } @else {
+              <span>Nhận diện</span>
+            }
           </button>
-          <button type="button" (click)="onReset()">Chọn ảnh khác</button>
+          <button type="button" class="app-btn app-btn--ghost" (click)="onReset()">
+            Chọn ảnh khác
+          </button>
         </div>
 
         <app-detection-overlay
@@ -52,9 +60,14 @@ import { RecognitionStore } from './recognition.store';
       }
 
       @if (store.loading()) {
-        <p class="notice" role="status">
-          Đang xử lý ảnh, ảnh nhiều xe có thể mất gần một giây.
-        </p>
+        <div class="loading-block" role="status">
+          <p class="notice">
+            Đang xử lý ảnh, ảnh nhiều xe có thể mất gần một giây.
+          </p>
+          <div class="app-skeleton skeleton-line"></div>
+          <div class="app-skeleton skeleton-line short"></div>
+          <div class="app-skeleton skeleton-block"></div>
+        </div>
       }
 
       @if (store.result(); as result) {
@@ -89,7 +102,9 @@ import { RecognitionStore } from './recognition.store';
           }
 
           @if (store.selected(); as vehicle) {
-            <app-prediction-list [vehicle]="vehicle" />
+            <div class="result-panel app-enter">
+              <app-prediction-list [vehicle]="vehicle" />
+            </div>
           }
         }
 
@@ -103,73 +118,112 @@ import { RecognitionStore } from './recognition.store';
     .page {
       max-width: 60rem;
       margin: 0 auto;
-      padding: 1rem;
+      padding: 1.5rem 1rem 4rem;
     }
 
     h1 {
-      font: var(--mat-sys-headline-small);
+      margin: 0 0 1.25rem;
+      font: var(--mat-sys-headline-medium);
+      font-weight: 700;
+      letter-spacing: -0.02em;
     }
 
     .actions {
       display: flex;
       flex-wrap: wrap;
-      gap: 0.5rem;
-      margin: 1rem 0;
-    }
-
-    .actions button {
-      padding: 0.5rem 1rem;
-      border: 1px solid var(--mat-sys-outline);
-      border-radius: 999px;
-      background: transparent;
-      color: var(--mat-sys-on-surface);
-      cursor: pointer;
-    }
-
-    .actions button:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
+      gap: 0.6rem;
+      margin: 1.25rem 0;
     }
 
     .notice,
     .error,
     .warning {
-      padding: 0.75rem;
-      border-radius: 0.5rem;
+      padding: 0.85rem 1rem;
+      border-radius: var(--app-radius-md);
+      animation: app-fade-in-up var(--app-duration) var(--app-ease) both;
     }
 
     .notice {
-      background: var(--mat-sys-surface-variant);
+      margin: 0;
+      background: var(--mat-sys-surface-container);
+      color: var(--mat-sys-on-surface-variant);
     }
 
     .error,
     .warning {
+      border-left: 3px solid var(--mat-sys-error);
       background: var(--mat-sys-error-container);
       color: var(--mat-sys-on-error-container);
     }
+
+    // --- Trang thai dang tai -------------------------------------------
+
+    .loading-block {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      margin: 1.25rem 0;
+    }
+
+    .skeleton-line {
+      height: 0.9rem;
+    }
+
+    .skeleton-line.short {
+      width: 60%;
+    }
+
+    .skeleton-block {
+      height: 7rem;
+    }
+
+    // --- Chon xe trong anh nhieu xe ------------------------------------
 
     .vehicle-tabs {
       display: flex;
       flex-wrap: wrap;
       gap: 0.5rem;
-      margin: 1rem 0;
+      margin: 1.25rem 0;
     }
 
     .vehicle-tabs button {
-      padding: 0.35rem 0.9rem;
-      border: 1px solid var(--mat-sys-outline);
-      border-radius: 999px;
-      background: transparent;
+      padding: 0.4rem 1rem;
+      border: 1px solid var(--mat-sys-outline-variant);
+      border-radius: var(--app-radius-pill);
+      background: var(--mat-sys-surface-container-low);
       color: var(--mat-sys-on-surface);
+      font: var(--mat-sys-label-large);
       cursor: pointer;
+      transition:
+        transform var(--app-duration-fast) var(--app-spring),
+        background-color var(--app-duration-fast) var(--app-ease),
+        color var(--app-duration-fast) var(--app-ease);
+    }
+
+    .vehicle-tabs button:hover {
+      transform: translateY(-1px);
+      border-color: var(--mat-sys-primary);
     }
 
     .vehicle-tabs button.active {
       background: var(--mat-sys-primary);
+      border-color: var(--mat-sys-primary);
       color: var(--mat-sys-on-primary);
+      box-shadow: var(--app-shadow-sm);
+    }
+
+    // --- Khung ket qua --------------------------------------------------
+
+    .result-panel {
+      margin-top: 1.25rem;
+      padding: 1.25rem;
+      border: 1px solid var(--mat-sys-outline-variant);
+      border-radius: var(--app-radius-lg);
+      background: var(--mat-sys-surface-container-low);
     }
 
     .timing {
+      margin-top: 1.25rem;
       color: var(--mat-sys-on-surface-variant);
       font: var(--mat-sys-body-small);
     }
