@@ -44,12 +44,17 @@ Toàn bộ chạy bằng ONNX Runtime trên CPU. Một ảnh mất khoảng **13
 | Hạng mục | Lựa chọn | Phiên bản |
 | :--- | :--- | :--- |
 | Framework | Angular (standalone components) | 22.1 |
-| Ngôn ngữ | TypeScript (strict mode) | 7.0 |
+| Ngôn ngữ | TypeScript (strict mode) | 6.0 |
 | Quản lý trạng thái | Angular Signals + `@ngrx/signals` | 22.0 |
 | HTTP | `HttpClient` với `provideHttpClient(withFetch())` | — |
 | Giao diện | Angular Material + Tailwind CSS | 22.1 / 4.3 |
-| Kiểm thử | Vitest + Angular Testing Library | 5.0 |
+| Kiểm thử | Vitest (test runner mặc định của Angular 22) | 4.1 |
 | Build | Angular CLI (esbuild) | 22.1 |
+
+> **Vì sao TypeScript 6.0 chứ không phải 7.0?** TypeScript 7.0 đã phát hành,
+> nhưng Angular 22.1 chưa khai báo hỗ trợ nó trong peer range — Angular CLI
+> scaffold ra `typescript ~6.0.2`. Nâng lên 7.0 có thể làm vỡ
+> `@angular/compiler-cli`. Sẽ nâng khi Angular công bố hỗ trợ chính thức.
 
 ### Nguyên tắc bắt buộc
 
@@ -160,6 +165,7 @@ Content-Type: multipart/form-data
 #### Những điểm dễ hiểu nhầm
 
 **`model_index` ≠ `class_id`.** Hai hệ đánh số khác nhau:
+
 - `model_index` (0-195): chỉ số đầu ra của mô hình
 - `class_id` (1-196): số thứ tự trong danh mục Stanford Cars
 
@@ -251,6 +257,7 @@ GET /ready    → {"status": "ready", "models_loaded": true,
 > nếu `models_loaded: false`.
 
 **Phân biệt `car_count` và `class_count`:**
+
 - `class_count: 196` — số lớp mô hình quốc tế phân loại được
 - `car_count: 216` — tổng số dòng xe trong bảng thông số
   (196 quốc tế + 20 Việt Nam)

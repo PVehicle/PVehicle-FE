@@ -10,7 +10,7 @@ các quyết định kỹ thuật kèm lý do.
 | Gói | Phiên bản | Ghi chú |
 | :--- | :--- | :--- |
 | Angular | 22.1.7 | standalone, zoneless |
-| TypeScript | 6.0.3 | **khác đặc tả** — xem mục 5 |
+| TypeScript | 6.0.3 | quyết định giữ — xem mục 5 |
 | `@ngrx/signals` | 22.0.0 | đúng đặc tả |
 | Angular Material | 22.1.6 | theme azure-blue |
 | Tailwind CSS | 4.x | qua `@tailwindcss/postcss` |
@@ -145,15 +145,25 @@ xuống. Đây là hành vi **đúng chuẩn JavaScript**, không phải lỗi c
 
 ---
 
-## 5. Điểm lệch so với đặc tả — cần anh quyết định
+## 5. Phiên bản TypeScript — đã quyết định
 
-**`README.md` ghi TypeScript 7.0, dự án đang chạy 6.0.3.**
+**Giữ TypeScript 6.0.3.** Không nâng lên 7.0.
 
-Angular CLI 22.1.7 scaffold ra `typescript ~6.0.2`. TypeScript 7.0.2 đã có
-trên npm, nhưng Angular 22.1 chưa khai báo hỗ trợ nó trong peer range.
+`README.md` ban đầu ghi TypeScript 7.0. TypeScript 7.0.2 đã có trên npm,
+nhưng Angular 22.1 chưa khai báo hỗ trợ nó trong peer range — Angular CLI
+22.1.7 scaffold ra `typescript ~6.0.2`.
 
-Chưa nâng lên 7.0 vì việc đó có thể làm vỡ `@angular/compiler-cli`. Cần
-quyết định trước khi làm feature.
+Lý do giữ 6.0.3:
+
+- Đúng peer range Angular công bố, build ổn định
+- Nâng lên 7.0 có nguy cơ làm vỡ `@angular/compiler-cli`
+- Lợi ích của TS 7.0 với dự án này chưa đủ để bù rủi ro
+
+`README.md` đã cập nhật về 6.0 cho khớp thực tế, kèm ghi chú lý do.
+
+**Khi nào nâng:** khi Angular công bố hỗ trợ TypeScript 7 chính thức trong
+peer range. Lúc đó nâng và chạy lại `npm run build` + `npm run test:ci`
+để kiểm chứng.
 
 ---
 
@@ -197,4 +207,3 @@ cd <thư mục PVehicle-AI>
 - [ ] Component dùng chung: `car-card`, `confidence-bar`, `empty-state`
 - [ ] Kiểm thử `ApiService` và các store
 - [ ] Kiểm tra WCAG 2.2 AA đầy đủ
-- [ ] Quyết định về phiên bản TypeScript (mục 5)
