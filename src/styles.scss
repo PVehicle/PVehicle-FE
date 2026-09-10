@@ -1,0 +1,47 @@
+// Tailwind CSS v4 - nap truoc de utility class khong de bi Material ghi de.
+@use 'tailwindcss';
+
+// Theming cho Angular Material bang `mat.theme()`.
+@use '@angular/material' as mat;
+
+html {
+  height: 100%;
+  @include mat.theme(
+    (
+      color: (
+        primary: mat.$azure-palette,
+        tertiary: mat.$blue-palette,
+      ),
+      typography: Roboto,
+      density: 0,
+    )
+  );
+}
+
+body {
+  // `light dark` de Material bam theo `prefers-color-scheme` cua he dieu
+  // hanh. Nut chuyen chu de se ghi de bang thuoc tinh `data-theme` ben duoi.
+  color-scheme: light dark;
+
+  background-color: var(--mat-sys-surface);
+  color: var(--mat-sys-on-surface);
+  font: var(--mat-sys-body-medium);
+
+  margin: 0;
+  height: 100%;
+}
+
+// Nguoi dung chon chu de thu cong - ghi de lua chon cua he dieu hanh.
+html[data-theme='light'] body {
+  color-scheme: light;
+}
+
+html[data-theme='dark'] body {
+  color-scheme: dark;
+}
+
+// WCAG 2.2 AA: vien focus phai nhin thay ro khi dieu huong bang ban phim.
+:focus-visible {
+  outline: 2px solid var(--mat-sys-primary);
+  outline-offset: 2px;
+}

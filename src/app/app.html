@@ -1,0 +1,31 @@
+<a class="skip-link" href="#main-content">Bỏ qua điều hướng</a>
+
+<header class="app-header">
+  <nav aria-label="Điều hướng chính">
+    <ul>
+      <li>
+        <a routerLink="/nhan-dien" routerLinkActive="active">Nhận diện</a>
+      </li>
+      <li>
+        <a routerLink="/tu-van" routerLinkActive="active">Tư vấn</a>
+      </li>
+      <li>
+        <a routerLink="/danh-muc" routerLinkActive="active">Danh mục</a>
+      </li>
+    </ul>
+  </nav>
+
+  <button
+    type="button"
+    class="theme-toggle"
+    (click)="toggleTheme()"
+    [attr.aria-label]="
+      theme() === 'dark' ? 'Chuyển sang chủ đề sáng' : 'Chuyển sang chủ đề tối'
+    ">
+    {{ theme() === 'dark' ? 'Sáng' : 'Tối' }}
+  </button>
+</header>
+
+<main id="main-content">
+  <router-outlet />
+</main>
