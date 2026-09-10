@@ -14,10 +14,15 @@ src/app/core/
 ├── count-up.directive.ts            # Số đếm tăng dần
 └── reveal-on-scroll.directive.ts    # Hiện dần khi cuộn (xem ghi chú)
 
+src/app/core/
+└── tilt.directive.ts                # Thẻ nghiêng theo con trỏ
+
 src/app/features/home/
 ├── home.page.ts                     # 5 slide
 ├── slide-deck.directive.ts          # Biến các section thành slide
 ├── hero.component.ts                # Hero + text reveal + nền động
+├── particle-field.component.ts      # Canvas hạt bay nối đường
+├── pipeline-stage.component.ts      # Hoạt hình 3 bước xử lý
 └── contact-form.component.ts        # Form liên hệ
 ```
 
@@ -131,7 +136,46 @@ return () => split.revert();
 | Cuộn giữa slide | `snap` — tự bắt sang slide gần nhất khi dừng cuộn |
 | Số liệu | `appCountUp` — đếm tăng dần từ 0 tới giá trị thật |
 | Thẻ tính năng | Hover: nhấc lên 6px, phóng 2%, icon xoay, mũi tên trượt |
-| Chuyển trang | Màn che quét ngang, trang mới trôi lên |
+| Chuyển trang | Ba lớp màn che lệch pha, cạnh chéo, trang mới trôi lên |
+| Hero — nền | Canvas hạt bay nối nhau, hút theo con trỏ chuột |
+| Hero — xe | SVG xe chạy ngang, bánh quay, vạch tốc độ lướt |
+| Cách hoạt động | Hoạt hình SVG 3 bước, chạy theo tay cuộn |
+| Thẻ tính năng | Nghiêng 3D theo vị trí con trỏ |
+
+### Hoạt hình 3 bước xử lý
+
+`pipeline-stage.component.ts` diễn lại toàn bộ quy trình bằng SVG:
+
+1. Tia quét chạy dọc bức ảnh, khung bao vẽ dần quanh xe kèm nhãn `car 0.62`
+2. Hai hộp mô hình trượt vào từ hai bên, viền sáng lên lần lượt
+3. Khung bao mờ đi, thẻ kết quả hiện lên với tên xe và thông số
+
+Timeline gắn `scrub: 0.8` nên **chạy theo tay cuộn** — kéo lên kéo xuống
+đều xem lại được từng bước, không phải hoạt hình tự phát rồi thôi.
+
+### Canvas hạt bay
+
+`particle-field.component.ts` vẽ bằng canvas 2D chứ không phải DOM: một
+trăm phần tử DOM chuyển động liên tục buộc trình duyệt tính lại bố cục mỗi
+khung hình, còn canvas chỉ là một thẻ.
+
+Chi tiết đáng lưu ý:
+
+- **Mật độ theo diện tích** — số hạt tính từ `width × height`, giới hạn 90
+  hạt để không làm nóng máy trên màn hình lớn
+- **`devicePixelRatio` chặn ở 2** — màn 3x trở lên vẽ rất tốn mà mắt thường
+  gần như không phân biệt được
+- **Dừng hẳn khi tab bị ẩn** (`visibilitychange`) — không đốt pin ở tab nền
+- **Con trỏ hút hạt** trong bán kính 170px, tạo cảm giác dàn hạt phản ứng
+
+### Nghiêng thẻ theo con trỏ
+
+`tilt.directive.ts` dùng `gsap.quickTo()` thay vì `gsap.to()` — hàm này tạo
+sẵn tween và chỉ cập nhật giá trị đích, phù hợp cho sự kiện bắn liên tục
+như `pointermove`.
+
+Điều kiện bật: `(hover: hover) and (pointer: fine)` — màn hình cảm ứng
+không có hover nên hiệu ứng vô nghĩa ở đó.
 
 ### Chế độ trình chiếu
 
@@ -234,9 +278,9 @@ có nó thì mục này luôn sáng, vì `/` khớp tiền tố mọi đường 
 | Build development | Thành công |
 | Build production | Thành công, không cảnh báo budget |
 | Kiểm thử | **53/53 pass** (trước: 50) |
-| Nội dung trong bundle | Đã xác nhận 5 slide nằm trong chunk `home-page` |
+| Nội dung trong bundle | 5 slide, particle field, pipeline, tilt đều trong `home-page` |
 | GSAP trong bundle | Tách thành lazy chunk `gsap` riêng |
-| Initial không phình | 84,0 kB — bằng trước khi thêm chuyển trang |
+| Initial không phình | **84,1 kB** — thêm nhiều hiệu ứng vẫn không đổi |
 
 Test đã thêm/sửa:
 

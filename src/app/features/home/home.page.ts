@@ -2,8 +2,10 @@ import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 import { CountUpDirective } from '../../core/count-up.directive';
+import { TiltDirective } from '../../core/tilt.directive';
 import { ContactFormComponent } from './contact-form.component';
 import { HeroComponent } from './hero.component';
+import { PipelineStageComponent } from './pipeline-stage.component';
 import { SlideDeckDirective } from './slide-deck.directive';
 
 interface Feature {
@@ -87,6 +89,8 @@ const SLIDE_LABELS = [
     ContactFormComponent,
     SlideDeckDirective,
     CountUpDirective,
+    PipelineStageComponent,
+    TiltDirective,
   ],
   template: `
     <nav class="slide-nav" aria-label="Các phần của trang">
@@ -149,6 +153,8 @@ const SLIDE_LABELS = [
           <p class="eyebrow">Cách hoạt động</p>
           <h2>Ba bước, khoảng 135 mili giây</h2>
 
+          <app-pipeline-stage />
+
           <ol class="steps">
             @for (step of steps; track step.number) {
               <li class="step">
@@ -171,7 +177,7 @@ const SLIDE_LABELS = [
 
           <div class="features">
             @for (feature of features; track feature.title) {
-              <article class="feature">
+              <article class="feature" appTilt>
                 <span class="feature-icon" aria-hidden="true">
                   @switch (feature.icon) {
                     @case ('camera') {

@@ -9,6 +9,7 @@ import {
 import { RouterLink } from '@angular/router';
 
 import { SplitText, gsap, registerGsap } from '../../core/gsap';
+import { ParticleFieldComponent } from './particle-field.component';
 
 /**
  * Phan mo dau cua trang chu.
@@ -17,13 +18,31 @@ import { SplitText, gsap, registerGsap } from '../../core/gsap';
  */
 @Component({
   selector: 'app-hero',
-  imports: [RouterLink],
+  imports: [RouterLink, ParticleFieldComponent],
   template: `
     <section #root class="hero">
       <div class="bg" aria-hidden="true">
         <span class="orb orb-1"></span>
         <span class="orb orb-2"></span>
         <span class="grid-lines"></span>
+        <app-particle-field />
+
+        <!-- Xe chay ngang o duoi, ve bang SVG de net o moi do phan giai -->
+        <svg class="car-track" viewBox="0 0 1200 120" preserveAspectRatio="none">
+          <g class="car">
+            <path
+              class="car-body"
+              d="M18 74h104v-13l-9-22a13 13 0 0 0-12-8H51a13 13 0 0 0-12 8l-9 22v13Z" />
+            <path class="car-glass" d="M46 52h48l7 17H39l7-17Z" />
+            <circle class="car-wheel" cx="42" cy="80" r="9" />
+            <circle class="car-wheel" cx="98" cy="80" r="9" />
+          </g>
+          <g class="speed-lines">
+            <line x1="0" y1="46" x2="70" y2="46" />
+            <line x1="0" y1="62" x2="110" y2="62" />
+            <line x1="0" y1="78" x2="55" y2="78" />
+          </g>
+        </svg>
       </div>
 
       <div class="content">
@@ -132,6 +151,45 @@ import { SplitText, gsap, registerGsap } from '../../core/gsap';
         );
       background-size: 3.5rem 3.5rem;
       mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, #000, transparent);
+    }
+
+    // Mau hat, doc bang getComputedStyle trong component canvas.
+    app-particle-field {
+      --particle-color: color-mix(
+        in srgb,
+        var(--mat-sys-primary) 75%,
+        var(--mat-sys-on-surface)
+      );
+    }
+
+    // --- Xe chay ngang ----------------------------------------------------
+
+    .car-track {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 8%;
+      width: 100%;
+      height: 7.5rem;
+      opacity: 0.28;
+    }
+
+    .car-body {
+      fill: var(--mat-sys-primary);
+    }
+
+    .car-glass {
+      fill: var(--mat-sys-surface);
+    }
+
+    .car-wheel {
+      fill: var(--mat-sys-on-surface);
+    }
+
+    .speed-lines line {
+      stroke: var(--mat-sys-primary);
+      stroke-width: 2.5;
+      stroke-linecap: round;
     }
 
     // --- Noi dung --------------------------------------------------------
@@ -303,76 +361,141 @@ export class HeroComponent implements OnInit {
       // GSAP tu chon nhanh dung theo cai dat he dieu hanh.
       const mm = gsap.matchMedia();
 
-      mm.add(
-        {
-          motion: '(prefers-reduced-motion: no-preference)',
-          reduced: '(prefers-reduced-motion: reduce)',
-        },
-        (context) => {
-          const { reduced } = context.conditions as {
-            motion: boolean;
-            reduced: boolean;
-          };
+      mm.add('(prefers-reduced-motion: reduce)', () => {
+        // Chi hien ra, khong chuyen dong.
+        gsap.set('.badge, .title, .lede, .actions, .stats', { opacity: 1 });
+      });
 
-          if (reduced) {
-            // Chi hien ra, khong chuyen dong.
-            gsap.set('.badge, .title, .lede, .actions, .stats', { opacity: 1 });
-            return;
-          }
+      mm.add('(prefers-reduced-motion: no-preference)', () => {
+        // Tach tieu de thanh dong VA ky tu: dong de cat khung, ky tu de
+        // hien lan luot tao cam giac chu duoc go ra.
+        const split = new SplitText(this.title().nativeElement, {
+          type: 'lines,chars',
+          linesClass: 'hero-line',
+        });
 
-          // Tach tieu de thanh tung dong de hien lan luot.
-          const split = new SplitText(this.title().nativeElement, {
-            type: 'lines',
-            linesClass: 'hero-line',
-          });
+        split.lines.forEach((line) => {
+          gsap.set(line, { overflow: 'hidden' });
+        });
 
-          // Moi dong nam trong mot khung cat de chu troi len tu duoi.
-          split.lines.forEach((line) => {
-            gsap.set(line, { overflow: 'hidden' });
-          });
+        const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
 
-          const tl = gsap.timeline({
-            defaults: { ease: 'power3.out' },
-          });
+        tl.from('.badge', {
+          opacity: 0,
+          y: 16,
+          scale: 0.92,
+          duration: 0.5,
+          ease: 'back.out(1.8)',
+        })
+          // Tung ky tu bat len, hoi nghieng va xoay nhe theo truc X.
+          .from(
+            split.chars,
+            {
+              opacity: 0,
+              yPercent: 130,
+              rotateX: -75,
+              duration: 0.85,
+              stagger: { each: 0.018, from: 'start' },
+            },
+            '-=0.2',
+          )
+          .from('.lede', { opacity: 0, y: 20, duration: 0.7 }, '-=0.5')
+          .from(
+            '.actions .app-btn',
+            { opacity: 0, y: 22, scale: 0.94, duration: 0.55, stagger: 0.1 },
+            '-=0.45',
+          )
+          .from(
+            '.stats div',
+            { opacity: 0, y: 18, duration: 0.5, stagger: 0.1 },
+            '-=0.3',
+          )
+          .from('.scroll-hint', { opacity: 0, duration: 0.6 }, '-=0.2');
 
-          tl.from('.badge', { opacity: 0, y: 16, duration: 0.5 })
-            .from(
-              split.lines,
-              { opacity: 0, yPercent: 110, duration: 0.9, stagger: 0.12 },
-              '-=0.2',
-            )
-            .from('.lede', { opacity: 0, y: 20, duration: 0.7 }, '-=0.5')
-            .from('.actions', { opacity: 0, y: 20, duration: 0.6 }, '-=0.45')
-            .from(
-              '.stats div',
-              { opacity: 0, y: 18, duration: 0.5, stagger: 0.1 },
-              '-=0.35',
-            )
-            .from('.scroll-hint', { opacity: 0, duration: 0.6 }, '-=0.2');
+        // Hai khoi sang troi cham theo huong nguoc nhau.
+        gsap.to('.orb-1', {
+          x: 60,
+          y: 40,
+          duration: 14,
+          ease: 'sine.inOut',
+          repeat: -1,
+          yoyo: true,
+        });
+        gsap.to('.orb-2', {
+          x: -50,
+          y: -30,
+          duration: 18,
+          ease: 'sine.inOut',
+          repeat: -1,
+          yoyo: true,
+        });
 
-          // Hai khoi sang troi cham theo huong nguoc nhau.
-          gsap.to('.orb-1', {
-            x: 60,
-            y: 40,
-            duration: 14,
-            ease: 'sine.inOut',
+        // Xe chay tu trai qua phai roi lap lai.
+        gsap.fromTo(
+          '.car',
+          { x: -160 },
+          {
+            x: 1260,
+            duration: 9,
+            ease: 'none',
             repeat: -1,
-            yoyo: true,
-          });
-          gsap.to('.orb-2', {
-            x: -50,
-            y: -30,
-            duration: 18,
-            ease: 'sine.inOut',
-            repeat: -1,
-            yoyo: true,
-          });
+            delay: 1.2,
+            repeatDelay: 2.5,
+          },
+        );
 
-          // SplitText phai duoc hoan nguyen, neu khong DOM giu lai cac the
-          // `div` tach dong va trinh doc man hinh se doc sai.
-          return () => split.revert();
-        },
-      );
+        // Banh xe quay quanh tam cua chinh no.
+        gsap.to('.car-wheel', {
+          rotation: 360,
+          transformOrigin: 'center',
+          duration: 0.9,
+          ease: 'none',
+          repeat: -1,
+        });
+
+        // Vach toc do chay nhanh hon xe, tao cam giac gio luot.
+        gsap.fromTo(
+          '.speed-lines line',
+          { x: -140, opacity: 0 },
+          {
+            x: 1240,
+            opacity: 0.7,
+            duration: 1.6,
+            ease: 'power1.in',
+            repeat: -1,
+            stagger: 0.18,
+            repeatDelay: 1.4,
+          },
+        );
+
+        // Parallax: nen troi cham hon noi dung khi cuon xuong.
+        gsap.to('.bg', {
+          yPercent: 22,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: this.root().nativeElement,
+            start: 'top top',
+            end: 'bottom top',
+            scrub: true,
+          },
+        });
+
+        gsap.to('.content', {
+          yPercent: -12,
+          opacity: 0.3,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: this.root().nativeElement,
+            start: 'top top',
+            end: 'bottom top',
+            scrub: true,
+          },
+        });
+
+        // SplitText phai duoc hoan nguyen, neu khong DOM giu lai cac the
+        // tach dong/ky tu va trinh doc man hinh se doc sai.
+        return () => split.revert();
+      });
     }, this.root().nativeElement);
 
     this.destroyRef.onDestroy(() => ctx.revert());

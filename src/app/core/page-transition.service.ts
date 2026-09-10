@@ -30,6 +30,7 @@ export class PageTransitionService {
   private readonly document = inject(DOCUMENT);
 
   private sweep: HTMLElement | null = null;
+  private layers: HTMLElement[] = [];
   private reduced = false;
   private gsapModule: GsapModule | null = null;
 
@@ -72,13 +73,26 @@ export class PageTransitionService {
     this.gsapModule = module;
   }
 
-  /** Tao lop phu dung de che man hinh luc chuyen trang. */
+  /**
+   * Tao lop phu che man hinh luc chuyen trang.
+   *
+   * Ba tam chong len nhau, moi tam mot mau va chay lech pha - nhin nhu mot
+   * tam rem nhieu lop quet qua thay vi mot khoi phang.
+   */
   private createSweep(): HTMLElement {
-    const element = this.document.createElement('div');
-    element.className = 'page-sweep';
-    element.setAttribute('aria-hidden', 'true');
-    this.document.body.appendChild(element);
-    return element;
+    const wrapper = this.document.createElement('div');
+    wrapper.className = 'page-sweep';
+    wrapper.setAttribute('aria-hidden', 'true');
+
+    this.layers = [0, 1, 2].map((index) => {
+      const layer = this.document.createElement('span');
+      layer.className = `sweep-layer sweep-layer-${index + 1}`;
+      wrapper.appendChild(layer);
+      return layer;
+    });
+
+    this.document.body.appendChild(wrapper);
+    return wrapper;
   }
 
   private onStart(): void {
@@ -86,11 +100,16 @@ export class PageTransitionService {
       return;
     }
 
-    // Quet tu trai sang, phu kin man hinh.
+    // Ba lop quet vao lech pha nhau, lop sau tre hon lop truoc.
     this.gsapModule.gsap.fromTo(
-      this.sweep,
-      { xPercent: -100 },
-      { xPercent: 0, duration: SWEEP_IN, ease: 'power3.inOut' },
+      this.layers,
+      { xPercent: -102 },
+      {
+        xPercent: 0,
+        duration: SWEEP_IN,
+        ease: 'power3.inOut',
+        stagger: 0.07,
+      },
     );
   }
 
@@ -110,11 +129,12 @@ export class PageTransitionService {
       onComplete: () => ScrollTrigger.refresh(),
     });
 
-    // Man che quet tiep sang phai roi bien mat.
-    tl.to(this.sweep, {
-      xPercent: 100,
+    // Quet tiep sang phai, lan nay lop truoc di truoc.
+    tl.to(this.layers, {
+      xPercent: 102,
       duration: SWEEP_OUT,
       ease: 'power3.inOut',
+      stagger: 0.06,
     });
 
     if (main !== null) {

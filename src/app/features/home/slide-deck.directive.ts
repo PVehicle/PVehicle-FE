@@ -72,39 +72,49 @@ export class SlideDeckDirective implements OnInit {
             },
           });
 
-          // Tung slide: noi dung troi len khi vao, mo dan khi bi cuon qua.
+          // Tung slide: noi dung bay vao theo truc 3D khi den luot, roi
+          // nghieng va lui ra sau khi bi cuon qua - giong cac tam kinh
+          // xep chong nhau.
           slides.forEach((slide, index) => {
             const content = slide.querySelector('.slide-inner');
             if (content === null) {
               return;
             }
 
+            // Can co phoi canh thi bien dang 3D moi thay chieu sau.
+            gsap.set(slide, { perspective: 1200 });
+
             // Slide dau tien da co hieu ung rieng luc tai trang.
             if (index > 0) {
               gsap.from(content, {
                 opacity: 0,
-                y: 60,
-                scale: 0.97,
-                duration: 0.9,
+                y: 80,
+                rotateX: 12,
+                scale: 0.92,
+                transformOrigin: 'center top',
+                duration: 1,
                 ease: 'power3.out',
                 scrollTrigger: {
                   trigger: slide,
-                  start: 'top 65%',
+                  start: 'top 68%',
                   toggleActions: 'play none none reverse',
                 },
               });
             }
 
-            // Slide cuoi khong can mo di - phia sau no khong con gi.
+            // Slide cuoi khong can lui - phia sau no khong con gi.
             if (index < slides.length - 1) {
               gsap.to(content, {
-                opacity: 0.15,
-                scale: 0.95,
+                opacity: 0.1,
+                scale: 0.86,
+                rotateX: -10,
+                y: -40,
+                transformOrigin: 'center bottom',
                 ease: 'none',
                 scrollTrigger: {
                   trigger: slide,
-                  start: 'bottom 85%',
-                  end: 'bottom 25%',
+                  start: 'bottom 88%',
+                  end: 'bottom 18%',
                   scrub: true,
                 },
               });
