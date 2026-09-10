@@ -272,6 +272,73 @@ body::before {
   background: var(--mat-sys-surface-container-low);
 }
 
+/// Quang sang studio di theo con tro.
+/// Directive `appSpotlight` tao the nay va cap nhat --spot-x / --spot-y.
+.spotlight-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0;
+  // Toa do la so thuan, ghep don vi o day.
+  background: radial-gradient(
+    var(--spot-size, 34rem) circle at calc(var(--spot-x, 0) * 1px)
+      calc(var(--spot-y, 0) * 1px),
+    color-mix(
+        in srgb,
+        var(--mat-sys-primary)
+          calc(var(--spot-strength, 0.16) * 100%),
+        transparent
+      )
+      0%,
+    transparent 62%
+  );
+}
+
+/// Khoi co quang sang phai tao ngu canh xep chong, neu khong lop sang se
+/// dinh vi theo to tien khac va lech han vi tri.
+[appSpotlight] {
+  position: relative;
+}
+
+/// Noi dung that phai noi len tren lop sang.
+[appSpotlight] > *:not(.spotlight-layer) {
+  position: relative;
+  z-index: 1;
+}
+
+/// Anh sang vien theo con tro cho tung the.
+/// Khac `.spotlight-layer` o cho no chi to sang duong vien.
+.edge-light {
+  position: relative;
+}
+
+.edge-light::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+  opacity: 0;
+  pointer-events: none;
+  padding: 1px;
+  background: radial-gradient(
+    14rem circle at calc(var(--edge-x, 50) * 1%) calc(var(--edge-y, 50) * 1%),
+    var(--mat-sys-primary),
+    transparent 70%
+  );
+  // Chi giu phan vien: to kin roi khoet ruot bang mask.
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  transition: opacity var(--app-duration) var(--app-ease);
+}
+
+.edge-light:hover::before {
+  opacity: 1;
+}
+
 /// Man che truot ngang khi chuyen trang.
 /// Nam ngoai cay component nen phai khai bao o day.
 .page-sweep {

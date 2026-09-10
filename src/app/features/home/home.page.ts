@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 import { CountUpDirective } from '../../core/count-up.directive';
+import { EdgeLightDirective } from '../../core/edge-light.directive';
+import { SpotlightDirective } from '../../core/spotlight.directive';
 import { TiltDirective } from '../../core/tilt.directive';
 import { ContactFormComponent } from './contact-form.component';
 import { HeroComponent } from './hero.component';
@@ -91,6 +93,8 @@ const SLIDE_LABELS = [
     CountUpDirective,
     PipelineStageComponent,
     TiltDirective,
+    SpotlightDirective,
+    EdgeLightDirective,
   ],
   template: `
     <nav class="slide-nav" aria-label="Các phần của trang">
@@ -114,7 +118,7 @@ const SLIDE_LABELS = [
       </section>
 
       <!-- 2. Gioi thieu -->
-      <section class="slide" id="slide-1">
+      <section class="slide" id="slide-1" appSpotlight>
         <div class="slide-inner narrow">
           <p class="eyebrow">Về hệ thống</p>
           <h2>Nhận diện xe không cần biết gì về xe</h2>
@@ -148,7 +152,7 @@ const SLIDE_LABELS = [
       </section>
 
       <!-- 3. Cach hoat dong -->
-      <section class="slide alt" id="slide-2">
+      <section class="slide alt" id="slide-2" appSpotlight>
         <div class="slide-inner">
           <p class="eyebrow">Cách hoạt động</p>
           <h2>Ba bước, khoảng 135 mili giây</h2>
@@ -170,14 +174,14 @@ const SLIDE_LABELS = [
       </section>
 
       <!-- 4. Tinh nang -->
-      <section class="slide" id="slide-3">
+      <section class="slide" id="slide-3" appSpotlight>
         <div class="slide-inner">
           <p class="eyebrow">Tính năng</p>
           <h2>Ba công cụ, một bảng dữ liệu</h2>
 
           <div class="features">
             @for (feature of features; track feature.title) {
-              <article class="feature" appTilt>
+              <article class="feature" appTilt appEdgeLight>
                 <span class="feature-icon" aria-hidden="true">
                   @switch (feature.icon) {
                     @case ('camera') {
@@ -234,7 +238,7 @@ const SLIDE_LABELS = [
       </section>
 
       <!-- 5. Lien he -->
-      <section class="slide alt" id="slide-4">
+      <section class="slide alt" id="slide-4" appSpotlight>
         <div class="slide-inner narrow">
           <p class="eyebrow">Liên hệ</p>
           <h2>Có câu hỏi hoặc góp ý?</h2>
