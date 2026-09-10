@@ -2,6 +2,7 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 
 import { HealthStore } from './core/health.store';
+import { PageTransitionService } from './core/page-transition.service';
 
 type Theme = 'light' | 'dark';
 
@@ -16,11 +17,13 @@ const THEME_STORAGE_KEY = 'pvehicle-theme';
 })
 export class App implements OnInit {
   private readonly health = inject(HealthStore);
+  private readonly transitions = inject(PageTransitionService);
 
   protected readonly theme = signal<Theme>(readStoredTheme());
 
   ngOnInit(): void {
     this.applyTheme(this.theme());
+    this.transitions.init();
     // Biet som backend da nap mo hinh chua de con vo hieu hoa tab nhan dien.
     void this.health.check();
   }

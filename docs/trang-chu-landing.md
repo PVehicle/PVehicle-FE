@@ -1,6 +1,7 @@
-# Trang chủ (landing page)
+# Trang chủ (landing page dạng trình chiếu)
 
-Trang giới thiệu ở `/`, dùng GSAP + ScrollTrigger cho hiệu ứng cuộn.
+Trang giới thiệu ở `/`, mỗi phần chiếm trọn màn hình và tự bắt sang phần kế
+khi cuộn — như một bộ slide. Kèm hiệu ứng chuyển trang cho toàn ứng dụng.
 
 ---
 
@@ -8,16 +9,24 @@ Trang giới thiệu ở `/`, dùng GSAP + ScrollTrigger cho hiệu ứng cuộn
 
 ```text
 src/app/core/
-├── gsap.ts                        # Đăng ký plugin một lần
-└── reveal-on-scroll.directive.ts  # Directive hiện dần khi cuộn
+├── gsap.ts                          # Đăng ký plugin một lần
+├── page-transition.service.ts       # Chuyển trang (toàn app)
+├── count-up.directive.ts            # Số đếm tăng dần
+└── reveal-on-scroll.directive.ts    # Hiện dần khi cuộn (xem ghi chú)
 
 src/app/features/home/
-├── home.page.ts                   # Ghép 4 section
-├── hero.component.ts              # Hero + text reveal + nền động
-└── contact-form.component.ts      # Form liên hệ
+├── home.page.ts                     # 5 slide
+├── slide-deck.directive.ts          # Biến các section thành slide
+├── hero.component.ts                # Hero + text reveal + nền động
+└── contact-form.component.ts        # Form liên hệ
 ```
 
-Bố cục: **Hero → Giới thiệu → Cách hoạt động → Tính năng → Liên hệ → Footer**
+Năm slide: **Hero → Về hệ thống → Cách hoạt động → Tính năng → Liên hệ**
+
+> **Ghi chú về `reveal-on-scroll.directive.ts`:** trang chủ đã chuyển sang
+> chế độ trình chiếu nên không dùng directive này nữa. Vẫn giữ lại vì ba
+> trang công cụ không phải slide — chúng sẽ cần nó khi muốn nội dung hiện
+> dần lúc cuộn.
 
 ---
 
@@ -118,9 +127,34 @@ return () => split.revert();
 | Hero — các phần còn lại | Timeline nối tiếp: badge → tiêu đề → mô tả → nút → số liệu |
 | Hero — nền | Hai khối sáng trôi chậm ngược hướng, lặp vô hạn |
 | Hero — gợi ý cuộn | Con lăn chuột nhấp nháy đi xuống |
-| Mọi section | `appReveal` — fade-in + slide-up khi cuộn tới |
-| Danh sách bước/thẻ | `revealChildren` — hiện lần lượt, cách nhau 0,12s |
-| Thẻ tính năng | Hover: nhấc lên 5px, phóng 1.5%, icon xoay nhẹ, mũi tên trượt |
+| Mỗi slide | Nội dung trôi lên khi vào, mờ dần khi bị cuộn qua |
+| Cuộn giữa slide | `snap` — tự bắt sang slide gần nhất khi dừng cuộn |
+| Số liệu | `appCountUp` — đếm tăng dần từ 0 tới giá trị thật |
+| Thẻ tính năng | Hover: nhấc lên 6px, phóng 2%, icon xoay, mũi tên trượt |
+| Chuyển trang | Màn che quét ngang, trang mới trôi lên |
+
+### Chế độ trình chiếu
+
+`slide-deck.directive.ts` biến 5 section thành slide chiếm trọn màn hình:
+
+```typescript
+snap: {
+  snapTo: 1 / (slides.length - 1),   // 5 slide → mốc 0, .25, .5, .75, 1
+  duration: { min: 0.25, max: 0.6 },
+  delay: 0.08,
+  ease: 'power2.inOut',
+}
+```
+
+**Chỉ bật khi màn hình đủ cao** (`min-height: 34.01rem`) và người dùng
+không yêu cầu giảm chuyển động. Màn hình thấp mà ép `100vh` thì nội dung
+bị cắt — lúc đó directive gỡ lớp `deck-active` và trang về cuộn thường.
+
+Dùng `100dvh` bên cạnh `100vh` để trên mobile không bị thanh địa chỉ của
+trình duyệt che mất.
+
+Chấm chỉ báo ở cạnh phải ẩn dưới 48rem — màn hình hẹp thì nội dung đã
+chiếm hết bề ngang.
 
 ### `toggleActions: 'play none none reverse'`
 
@@ -150,16 +184,36 @@ Khi backend có endpoint thật, chỉ cần thay phần `onSubmit()`.
 
 ## 6. Ảnh hưởng tới các trang khác
 
-**Không có.** GSAP nằm gọn trong chunk `home-page` nhờ lazy loading:
+Chuyển trang là tính năng **toàn app**, nên `PageTransitionService` chạy ở
+tầng `App`. Nếu import GSAP tĩnh ở đó, cả thư viện bị kéo vào bundle đầu
+vào — đo được **+44 kB nén** (83,5 → 127,7 kB).
+
+Cách xử lý: **nạp GSAP động** sau khi ứng dụng đã hiển thị.
+
+```typescript
+private async loadGsap(): Promise<void> {
+  const module = await import('./gsap');
+  module.registerGsap();
+  this.gsapModule = module;
+}
+```
+
+Đánh đổi: **lần chuyển trang đầu tiên có thể chưa có hiệu ứng** nếu người
+dùng bấm ngay khi trang vừa tải. Các lần sau đầy đủ. Đổi lại lần hiển thị
+đầu không bị chậm — đây là thứ người dùng cảm nhận rõ hơn.
+
+Kết quả đo được:
 
 | Chunk | Kích thước (nén) |
 | :--- | ---: |
-| Initial | 83,5 kB |
-| `home-page` (có GSAP) | 49,8 kB |
+| Initial | **84,0 kB** — bằng mức trước khi thêm chuyển trang |
+| `gsap` (chunk riêng) | 43,5 kB |
+| `home-page` | 6,9 kB |
 | `recognition-page` | 7,0 kB |
 | `catalog-page` | 3,5 kB |
 
-Ba trang công cụ không tải GSAP.
+Người dùng không vào trang chủ vẫn tải GSAP (vì chuyển trang cần nó), nhưng
+tải **sau** khi trang đã hiện, không chặn.
 
 ### Thay đổi điều hướng
 
@@ -180,14 +234,27 @@ có nó thì mục này luôn sáng, vì `/` khớp tiền tố mọi đường 
 | Build development | Thành công |
 | Build production | Thành công, không cảnh báo budget |
 | Kiểm thử | **53/53 pass** (trước: 50) |
-| Nội dung trong bundle | Đã xác nhận 4 section nằm trong chunk `home-page` |
-| GSAP trong bundle | ScrollTrigger nằm đúng chunk `home-page` |
+| Nội dung trong bundle | Đã xác nhận 5 slide nằm trong chunk `home-page` |
+| GSAP trong bundle | Tách thành lazy chunk `gsap` riêng |
+| Initial không phình | 84,0 kB — bằng trước khi thêm chuyển trang |
 
 Test đã thêm/sửa:
 
 - `contact-form.component.spec.ts` — 3 test: nút bị vô hiệu khi thiếu
   trường, bật khi đủ, coi khoảng trắng là chưa điền
 - `app.spec.ts` — cập nhật từ 3 lên 4 mục điều hướng
+
+### Lỗi đã gặp: `matchMedia` trong jsdom
+
+`PageTransitionService.init()` gọi thẳng `view.matchMedia(...)` làm 2 test
+vỡ với `TypeError: view?.matchMedia is not a function`.
+
+Đây là **lỗi thật trong code**, không phải lỗi test — jsdom không cài đặt
+API này, và môi trường không phải trình duyệt cũng vậy. Đã thêm kiểm tra
+`typeof view?.matchMedia === 'function'` trước khi gọi.
+
+Cùng loại lỗi đã gặp ở `app.ts` trước đây — cần nhớ khi viết code chạm vào
+API trình duyệt.
 
 ---
 
@@ -197,3 +264,5 @@ Test đã thêm/sửa:
 - [ ] Bật "giảm chuyển động" trong hệ điều hành để kiểm tra nhánh reduced
 - [ ] Thay `mailto:` bằng endpoint thật khi backend có
 - [ ] Cân nhắc ảnh minh họa cho Hero (hiện chỉ có chữ và nền động)
+- [ ] Thử trên mobile thật: `snap` có thể khó chịu trên màn hình cảm ứng
+- [ ] Làm chấm chỉ báo sáng theo slide đang xem (hiện chỉ sáng khi hover)
