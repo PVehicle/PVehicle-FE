@@ -29,7 +29,7 @@ describe('App', () => {
     expect(fixture.componentInstance).toBeTruthy();
   });
 
-  it('hien thi day du ba muc dieu huong', async () => {
+  it('hien thi day du bon muc dieu huong', async () => {
     const fixture = TestBed.createComponent(App);
     await fixture.whenStable();
 
@@ -38,7 +38,12 @@ describe('App', () => {
     );
     const labels = Array.from(links).map((link) => link.textContent?.trim());
 
-    expect(labels).toEqual(['Nhận diện', 'Tư vấn', 'Danh mục']);
+    expect(labels).toEqual([
+      'Trang chủ',
+      'Nhận diện',
+      'Tư vấn',
+      'Danh mục',
+    ]);
   });
 
   it('goi /ready khi khoi dong de biet mo hinh da nap chua', async () => {

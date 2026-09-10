@@ -7,7 +7,9 @@ export const routes: Routes = [
   {
     path: '',
     pathMatch: 'full',
-    redirectTo: 'nhan-dien',
+    title: 'PVehicle — Nhận diện ô tô bằng AI',
+    loadComponent: () =>
+      import('./features/home/home.page').then((m) => m.HomePage),
   },
   {
     path: 'nhan-dien',
@@ -41,6 +43,6 @@ export const routes: Routes = [
   },
   {
     path: '**',
-    redirectTo: 'nhan-dien',
+    redirectTo: '',
   },
 ];

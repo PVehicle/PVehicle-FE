@@ -1,7 +1,7 @@
 <a class="skip-link" href="#main-content">Bỏ qua điều hướng</a>
 
 <header class="app-header">
-  <a class="brand" routerLink="/nhan-dien" aria-label="PVehicle - trang chủ">
+  <a class="brand" routerLink="/" aria-label="PVehicle - trang chủ">
     <span class="brand-mark" aria-hidden="true">
       <svg viewBox="0 0 24 24" width="18" height="18">
         <path
@@ -14,6 +14,14 @@
 
   <nav aria-label="Điều hướng chính">
     <ul>
+      <li>
+        <a
+          routerLink="/"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }">
+          <span>Trang chủ</span>
+        </a>
+      </li>
       <li>
         <a routerLink="/nhan-dien" routerLinkActive="active">
           <span>Nhận diện</span>
