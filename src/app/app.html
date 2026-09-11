@@ -12,8 +12,14 @@
     <span class="brand-name">PVehicle</span>
   </a>
 
-  <nav aria-label="Điều hướng chính">
+  <nav #nav aria-label="Điều hướng chính">
     <ul>
+      <!--
+        Mot thanh chi bao duy nhat cho ca nav, truot sang tab dang chon.
+        Moi tab co mot the rieng thi chi bao chi tat cho nay bat cho kia,
+        khong tao cam giac di chuyen.
+      -->
+      <li class="nav-indicator" aria-hidden="true"></li>
       <li>
         <a
           routerLink="/"

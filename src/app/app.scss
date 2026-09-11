@@ -76,6 +76,7 @@
 // --- Dieu huong ------------------------------------------------------------
 
 nav ul {
+  position: relative;
   display: flex;
   gap: 0.25rem;
   margin: 0;
@@ -109,22 +110,20 @@ nav a.active {
   font-weight: 600;
 }
 
-// Thanh chi bao duoi tab dang chon - truot ra tu giua khi duoc kich hoat.
-nav a::after {
-  content: '';
+// Mot thanh chi bao duy nhat cho ca nav, truot sang tab dang chon.
+// Vi tri va do rong do `app.ts` tinh roi dat bang GSAP.
+.nav-indicator {
   position: absolute;
-  left: 50%;
-  bottom: 0.1rem;
+  bottom: 0.05rem;
+  left: 0;
   height: 2px;
   width: 0;
   border-radius: 2px;
   background: var(--mat-sys-primary);
-  transform: translateX(-50%);
-  transition: width var(--app-duration) var(--app-spring);
-}
-
-nav a.active::after {
-  width: 1.5rem;
+  opacity: 0;
+  pointer-events: none;
+  box-shadow: 0 0 10px
+    color-mix(in srgb, var(--mat-sys-primary) 65%, transparent);
 }
 
 // --- Nut chuyen chu de -----------------------------------------------------
