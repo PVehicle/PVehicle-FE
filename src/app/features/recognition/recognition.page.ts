@@ -18,9 +18,30 @@ import { RecognitionStore } from './recognition.store';
   ],
   template: `
     <section class="page">
-      <h1 class="app-enter">Nhận diện xe</h1>
+      <h1 class="app-enter">Nhận diện <span class="app-gradient-text">xe</span></h1>
 
-      @if (!health.canRecognize()) {
+      @if (health.isOffline()) {
+        <div class="offline" role="alert">
+          <span class="offline-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="20" height="20">
+              <path
+                fill="none" stroke="currentColor" stroke-width="1.8"
+                stroke-linecap="round"
+                d="M12 8v5m0 3.5v.01M10.3 3.9 2.6 17.4A2 2 0 0 0 4.3 20.4h15.4a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z" />
+            </svg>
+          </span>
+          <div>
+            <p class="offline-title">Không kết nối được máy chủ</p>
+            <p class="offline-body">
+              Backend chưa chạy hoặc không phản hồi. Hãy khởi động máy chủ
+              rồi tải lại trang.
+            </p>
+            <code class="offline-cmd"
+              >python -m uvicorn src.api.main:app --reload</code
+            >
+          </div>
+        </div>
+      } @else if (!health.canRecognize()) {
         <p class="notice" role="status">
           Hệ thống đang khởi động, chức năng nhận diện tạm thời chưa dùng
           được. Chức năng tư vấn xe vẫn hoạt động bình thường.
@@ -122,10 +143,16 @@ import { RecognitionStore } from './recognition.store';
     }
 
     h1 {
-      margin: 0 0 1.25rem;
-      font: var(--mat-sys-headline-medium);
+      margin: 0 0 1.5rem;
+      font-family: var(--app-font-display);
+      font-size: clamp(1.85rem, 4vw, 2.5rem);
       font-weight: 700;
-      letter-spacing: -0.02em;
+      letter-spacing: -0.03em;
+    }
+
+    h1 .app-gradient-text {
+      display: inline-block;
+      padding-bottom: 0.05em;
     }
 
     .actions {
@@ -133,6 +160,52 @@ import { RecognitionStore } from './recognition.store';
       flex-wrap: wrap;
       gap: 0.6rem;
       margin: 1.25rem 0;
+    }
+
+    // --- Bao may chu khong phan hoi ------------------------------------
+
+    .offline {
+      display: flex;
+      gap: 0.9rem;
+      margin-bottom: 1.5rem;
+      padding: 1.1rem 1.25rem;
+      border: 1px solid color-mix(
+        in srgb,
+        var(--mat-sys-error) 45%,
+        transparent
+      );
+      border-radius: var(--app-radius-lg);
+      background: var(--mat-sys-error-container);
+      color: var(--mat-sys-on-error-container);
+      animation: app-fade-in-up var(--app-duration) var(--app-ease) both;
+    }
+
+    .offline-icon {
+      flex-shrink: 0;
+      color: var(--mat-sys-error);
+    }
+
+    .offline-title {
+      margin: 0 0 0.3rem;
+      font-family: var(--app-font-display);
+      font-size: 1.02rem;
+      font-weight: 650;
+    }
+
+    .offline-body {
+      margin: 0 0 0.7rem;
+      font-size: 0.92rem;
+      line-height: 1.6;
+    }
+
+    .offline-cmd {
+      display: inline-block;
+      padding: 0.35rem 0.65rem;
+      border-radius: var(--app-radius-sm);
+      background: color-mix(in srgb, var(--mat-sys-on-surface) 10%, transparent);
+      font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+      font-size: 0.82rem;
+      word-break: break-all;
     }
 
     .notice,

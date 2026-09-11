@@ -9,19 +9,22 @@ import {
 import { firstValueFrom } from 'rxjs';
 
 import { ApiService } from './api.service';
-import { toMessage } from './error.interceptor';
+import { toAppError } from './error.interceptor';
 import type { ReadinessResponse } from './models';
 
 interface HealthState {
   readiness: ReadinessResponse | null;
   loading: boolean;
   error: string | null;
+  /** Ma HTTP cua lan goi that bai; 0 nghia la khong ket noi duoc. */
+  errorStatus: number | null;
 }
 
 const INITIAL_STATE: HealthState = {
   readiness: null,
   loading: false,
   error: null,
+  errorStatus: null,
 };
 
 /**
@@ -34,7 +37,15 @@ const INITIAL_STATE: HealthState = {
 export const HealthStore = signalStore(
   { providedIn: 'root' },
   withState(INITIAL_STATE),
-  withComputed(({ readiness }) => ({
+  withComputed(({ readiness, errorStatus }) => ({
+    /**
+     * May chu khong phan hoi (chua bat, sai dia chi, hoac bi CORS chan).
+     *
+     * Khac han voi "mo hinh chua nap xong": truong hop do may chu van tra
+     * loi, chi la chua san sang. Phai phan biet de bao dung cho nguoi dung.
+     */
+    isOffline: computed(() => errorStatus() === 0),
+
     /** Chi bat tab nhan dien khi mo hinh da nap xong. */
     canRecognize: computed(() => readiness()?.models_loaded ?? false),
 
@@ -53,15 +64,17 @@ export const HealthStore = signalStore(
      * dien biet ma vo hieu hoa tab nhan dien.
      */
     async check(): Promise<void> {
-      patchState(store, { loading: true, error: null });
+      patchState(store, { loading: true, error: null, errorStatus: null });
       try {
         const readiness = await firstValueFrom(api.ready());
-        patchState(store, { readiness, loading: false });
+        patchState(store, { readiness, loading: false, errorStatus: null });
       } catch (error) {
+        const appError = toAppError(error);
         patchState(store, {
           readiness: null,
           loading: false,
-          error: toMessage(error),
+          error: appError.message,
+          errorStatus: appError.status,
         });
       }
     },

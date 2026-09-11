@@ -12,7 +12,7 @@ html {
         primary: mat.$azure-palette,
         tertiary: mat.$blue-palette,
       ),
-      typography: Roboto,
+      typography: Inter,
       density: 0,
     )
   );
@@ -44,6 +44,16 @@ html {
   --app-duration: 240ms;
   --app-duration-slow: 420ms;
 
+  // Ho chu: Space Grotesk cho tieu de (hinh hoc, co net cat dac trung),
+  // Inter cho noi dung (de doc o co nho).
+  --app-font-display: 'Space Grotesk', 'Inter', system-ui, sans-serif;
+  --app-font-body: 'Inter', system-ui, -apple-system, sans-serif;
+
+  // Hoa tiet nen, dung qua mask nen an theo mau chu hien tai.
+  --app-pattern-grid: url('/patterns/grid.svg');
+  --app-pattern-dots: url('/patterns/dots.svg');
+  --app-pattern-noise: url('/patterns/noise.svg');
+
   // Nen chuyen sac cho cac khu vuc can noi bat.
   --app-gradient: linear-gradient(
     135deg,
@@ -59,10 +69,15 @@ body {
 
   background-color: var(--mat-sys-surface);
   color: var(--mat-sys-on-surface);
-  font: var(--mat-sys-body-medium);
+  font-family: var(--app-font-body);
+  font-size: 1rem;
+  line-height: 1.6;
 
   margin: 0;
   min-height: 100%;
+  // Chu net hon tren man hinh thuong.
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 
   // Doi mau muot khi nguoi dung chuyen chu de.
   transition:
@@ -79,27 +94,55 @@ html[data-theme='dark'] body {
   color-scheme: dark;
 }
 
+// Moi tieu de dung ho chu hien thi.
+h1,
+h2,
+h3,
+.app-display {
+  font-family: var(--app-font-display);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+}
+
 // ---------------------------------------------------------------------------
-// Anh sang nen - tao chieu sau cho trang thay vi mot mang mau phang
+// Anh sang nen - nhieu lop tao chieu sau thay vi mot mang mau phang
 // ---------------------------------------------------------------------------
 
 body::before {
   content: '';
   position: fixed;
   inset: 0;
-  z-index: -1;
+  z-index: -2;
   pointer-events: none;
   background:
     radial-gradient(
-      60rem 40rem at 15% -10%,
-      color-mix(in srgb, var(--mat-sys-primary) 10%, transparent),
-      transparent
+      55rem 38rem at 12% -8%,
+      color-mix(in srgb, var(--mat-sys-primary) 16%, transparent),
+      transparent 70%
     ),
     radial-gradient(
-      50rem 35rem at 100% 0%,
-      color-mix(in srgb, var(--mat-sys-tertiary) 8%, transparent),
-      transparent
+      48rem 34rem at 100% 4%,
+      color-mix(in srgb, var(--mat-sys-tertiary) 13%, transparent),
+      transparent 70%
+    ),
+    radial-gradient(
+      40rem 30rem at 60% 100%,
+      color-mix(in srgb, var(--mat-sys-primary) 8%, transparent),
+      transparent 70%
     );
+}
+
+// Lop hat nhieu mong phu len tren - pha bot cam giac mau chuyen sac bi
+// "phang", giong nhu do ha cua anh chup.
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.035;
+  background-image: var(--app-pattern-noise);
+  background-size: 180px 180px;
 }
 
 // ---------------------------------------------------------------------------
@@ -262,6 +305,181 @@ body::before {
     var(--mat-sys-surface-container);
   background-size: 200% 100%;
   animation: app-shimmer 1.4s ease-in-out infinite;
+}
+
+/// Chu to sang bang chuyen sac - dung cho tu khoa trong tieu de.
+.app-gradient-text {
+  background: linear-gradient(
+    100deg,
+    var(--mat-sys-primary),
+    color-mix(in srgb, var(--mat-sys-tertiary) 75%, var(--mat-sys-primary)) 55%,
+    var(--mat-sys-primary)
+  );
+  background-size: 220% auto;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  animation: app-gradient-shift 6s ease-in-out infinite;
+}
+
+@keyframes app-gradient-shift {
+  0%,
+  100% {
+    background-position: 0% center;
+  }
+  50% {
+    background-position: 100% center;
+  }
+}
+
+/// Vien phat sang chay quanh khoi - dung cho the noi bat.
+.app-glow-border {
+  position: relative;
+  isolation: isolate;
+}
+
+.app-glow-border::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  z-index: -1;
+  border-radius: inherit;
+  padding: 1px;
+  background: conic-gradient(
+    from var(--glow-angle, 0deg),
+    transparent 0%,
+    var(--mat-sys-primary) 18%,
+    transparent 36%
+  );
+  // Chi giu phan vien: to kin roi khoet ruot.
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity var(--app-duration) var(--app-ease);
+}
+
+.app-glow-border:hover::before {
+  opacity: 1;
+  animation: app-glow-spin 3s linear infinite;
+}
+
+// `@property` cho phep animate goc - khong co no trinh duyet coi
+// `--glow-angle` la chuoi va nhay thang toi gia tri cuoi.
+@property --glow-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@keyframes app-glow-spin {
+  to {
+    --glow-angle: 360deg;
+  }
+}
+
+/// Hoa tiet luoi mo dan, dat lam nen cho mot khu vuc.
+.app-grid-bg {
+  position: relative;
+}
+
+.app-grid-bg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  color: var(--mat-sys-on-surface);
+  background-image: var(--app-pattern-grid);
+  background-size: 56px 56px;
+  opacity: 0.08;
+  mask-image: radial-gradient(ellipse 75% 65% at 50% 40%, #000, transparent);
+}
+
+/// Luoi the tinh nang va mau the - dung o trang chu, sau nay co the dung
+/// lai o cac trang khac nen dat o day thay vi trong mot component.
+.features {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
+  gap: 1.25rem;
+  margin-top: 2rem;
+}
+
+.feature {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  padding: 1.85rem;
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: var(--app-radius-lg);
+  background:
+    linear-gradient(
+      165deg,
+      color-mix(in srgb, var(--mat-sys-primary) 7%, transparent),
+      transparent 55%
+    ),
+    var(--mat-sys-surface-container-low);
+  transition:
+    transform var(--app-duration) var(--app-spring),
+    border-color var(--app-duration) var(--app-ease),
+    box-shadow var(--app-duration) var(--app-ease);
+}
+
+.feature:hover {
+  transform: translateY(-6px) scale(1.02);
+  border-color: color-mix(in srgb, var(--mat-sys-primary) 50%, transparent);
+  box-shadow: var(--app-shadow-lg);
+}
+
+.feature-icon {
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: var(--app-radius-md);
+  background: color-mix(in srgb, var(--mat-sys-primary) 14%, transparent);
+  color: var(--mat-sys-primary);
+  transition: transform var(--app-duration) var(--app-spring);
+}
+
+.feature:hover .feature-icon {
+  transform: scale(1.12) rotate(-8deg);
+}
+
+.feature h3 {
+  margin: 0;
+  font-family: var(--app-font-display);
+  font-size: 1.15rem;
+  font-weight: 650;
+  letter-spacing: -0.015em;
+}
+
+.feature p {
+  flex: 1;
+  margin: 0;
+  color: var(--mat-sys-on-surface-variant);
+  line-height: 1.7;
+}
+
+.feature-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.5rem;
+  color: var(--mat-sys-primary);
+  font-family: var(--app-font-display);
+  font-size: 0.92rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.feature-link span {
+  transition: transform var(--app-duration) var(--app-spring);
+}
+
+.feature:hover .feature-link span {
+  transform: translateX(5px);
 }
 
 /// Khung noi dung co nen va vien nhe.

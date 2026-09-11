@@ -121,7 +121,7 @@ const SLIDE_LABELS = [
       <section class="slide" id="slide-1" appSpotlight>
         <div class="slide-inner narrow">
           <p class="eyebrow">Về hệ thống</p>
-          <h2>Nhận diện xe không cần biết gì về xe</h2>
+          <h2>Nhận diện xe <span class="app-gradient-text">không cần biết gì</span> về xe</h2>
           <p class="body">
             PVehicle-AI được xây để trả lời một câu hỏi đơn giản: chiếc xe
             trong ảnh này là xe gì. Toàn bộ mô hình chạy bằng ONNX Runtime
@@ -152,10 +152,10 @@ const SLIDE_LABELS = [
       </section>
 
       <!-- 3. Cach hoat dong -->
-      <section class="slide alt" id="slide-2" appSpotlight>
+      <section class="slide alt app-grid-bg" id="slide-2" appSpotlight>
         <div class="slide-inner">
           <p class="eyebrow">Cách hoạt động</p>
-          <h2>Ba bước, khoảng 135 mili giây</h2>
+          <h2>Ba bước, khoảng <span class="app-gradient-text">135 mili giây</span></h2>
 
           <app-pipeline-stage />
 
@@ -177,11 +177,11 @@ const SLIDE_LABELS = [
       <section class="slide" id="slide-3" appSpotlight>
         <div class="slide-inner">
           <p class="eyebrow">Tính năng</p>
-          <h2>Ba công cụ, một bảng dữ liệu</h2>
+          <h2>Ba công cụ, <span class="app-gradient-text">một bảng dữ liệu</span></h2>
 
           <div class="features">
             @for (feature of features; track feature.title) {
-              <article class="feature" appTilt appEdgeLight>
+              <article class="feature app-glow-border" appTilt appEdgeLight>
                 <span class="feature-icon" aria-hidden="true">
                   @switch (feature.icon) {
                     @case ('camera') {
@@ -331,20 +331,40 @@ const SLIDE_LABELS = [
     // --- Chu chung --------------------------------------------------------
 
     .eyebrow {
-      margin: 0 0 0.6rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      margin: 0 0 0.85rem;
       color: var(--mat-sys-primary);
-      font: var(--mat-sys-label-large);
-      font-weight: 650;
+      font-family: var(--app-font-display);
+      font-size: 0.82rem;
+      font-weight: 600;
       text-transform: uppercase;
-      letter-spacing: 0.09em;
+      letter-spacing: 0.11em;
+    }
+
+    // Vach ngan dan vao chu, giup nhan bat mat hon.
+    .eyebrow::before {
+      content: '';
+      width: 1.75rem;
+      height: 2px;
+      border-radius: 2px;
+      background: currentcolor;
     }
 
     h2 {
       margin: 0 0 1.5rem;
-      font-size: clamp(1.75rem, 4vw, 2.75rem);
+      font-family: var(--app-font-display);
+      font-size: clamp(1.9rem, 4.5vw, 3.1rem);
       font-weight: 700;
-      line-height: 1.15;
-      letter-spacing: -0.025em;
+      line-height: 1.1;
+      letter-spacing: -0.032em;
+    }
+
+    // Chu chuyen sac can dat inline-block de phan duoi khong bi cat.
+    h2 .app-gradient-text {
+      display: inline-block;
+      padding-bottom: 0.05em;
     }
 
     .body {
@@ -380,11 +400,20 @@ const SLIDE_LABELS = [
 
     .metrics dd {
       margin: 0;
-      font-size: clamp(2rem, 5vw, 3rem);
-      font-weight: 750;
-      letter-spacing: -0.03em;
+      font-family: var(--app-font-display);
+      font-size: clamp(2.3rem, 5.5vw, 3.4rem);
+      font-weight: 700;
+      letter-spacing: -0.035em;
       line-height: 1;
       font-variant-numeric: tabular-nums;
+      background: linear-gradient(
+        160deg,
+        var(--mat-sys-on-surface),
+        color-mix(in srgb, var(--mat-sys-primary) 85%, var(--mat-sys-on-surface))
+      );
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
     }
 
     .metrics dt {
@@ -417,10 +446,12 @@ const SLIDE_LABELS = [
       display: block;
       margin-bottom: 0.6rem;
       color: var(--mat-sys-primary);
-      font-size: 1.75rem;
-      font-weight: 750;
+      font-family: var(--app-font-display);
+      font-size: 2rem;
+      font-weight: 700;
       letter-spacing: -0.02em;
       font-variant-numeric: tabular-nums;
+      opacity: 0.85;
     }
 
     .step h3 {
@@ -433,81 +464,6 @@ const SLIDE_LABELS = [
       margin: 0;
       color: var(--mat-sys-on-surface-variant);
       line-height: 1.7;
-    }
-
-    // --- Tinh nang --------------------------------------------------------
-
-    .features {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
-      gap: 1.25rem;
-      margin-top: 2rem;
-    }
-
-    .feature {
-      display: flex;
-      flex-direction: column;
-      gap: 0.65rem;
-      padding: 1.75rem;
-      border: 1px solid var(--mat-sys-outline-variant);
-      border-radius: var(--app-radius-lg);
-      background: var(--mat-sys-surface-container-low);
-      transition:
-        transform var(--app-duration) var(--app-spring),
-        border-color var(--app-duration) var(--app-ease),
-        box-shadow var(--app-duration) var(--app-ease);
-    }
-
-    .feature:hover {
-      transform: translateY(-6px) scale(1.02);
-      border-color: color-mix(in srgb, var(--mat-sys-primary) 50%, transparent);
-      box-shadow: var(--app-shadow-lg);
-    }
-
-    .feature-icon {
-      display: grid;
-      place-items: center;
-      width: 2.75rem;
-      height: 2.75rem;
-      border-radius: var(--app-radius-md);
-      background: color-mix(in srgb, var(--mat-sys-primary) 14%, transparent);
-      color: var(--mat-sys-primary);
-      transition: transform var(--app-duration) var(--app-spring);
-    }
-
-    .feature:hover .feature-icon {
-      transform: scale(1.12) rotate(-8deg);
-    }
-
-    .feature h3 {
-      margin: 0;
-      font: var(--mat-sys-title-medium);
-      font-weight: 650;
-    }
-
-    .feature p {
-      flex: 1;
-      margin: 0;
-      color: var(--mat-sys-on-surface-variant);
-      line-height: 1.7;
-    }
-
-    .feature-link {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.4rem;
-      margin-top: 0.5rem;
-      color: var(--mat-sys-primary);
-      font: var(--mat-sys-label-large);
-      text-decoration: none;
-    }
-
-    .feature-link span {
-      transition: transform var(--app-duration) var(--app-spring);
-    }
-
-    .feature:hover .feature-link span {
-      transform: translateX(5px);
     }
 
     // Man hinh hep: an cham chi bao, noi dung da chiem het be ngang.

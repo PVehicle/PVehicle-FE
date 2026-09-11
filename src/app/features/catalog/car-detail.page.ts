@@ -117,9 +117,10 @@ import { CarDetailStore } from './car-detail.store';
 
     h1 {
       margin: 0 0 1.25rem;
-      font: var(--mat-sys-headline-medium);
+      font-family: var(--app-font-display);
+      font-size: clamp(1.75rem, 3.8vw, 2.4rem);
       font-weight: 700;
-      letter-spacing: -0.02em;
+      letter-spacing: -0.03em;
     }
 
     h2 {

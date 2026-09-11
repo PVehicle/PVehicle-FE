@@ -19,7 +19,7 @@ import type { CatalogFilters } from './catalog.store';
   ],
   template: `
     <section class="page">
-      <h1 class="app-enter">Danh mục xe</h1>
+      <h1 class="app-enter">Danh mục <span class="app-gradient-text">xe</span></h1>
 
       <app-catalog-filters
         [filters]="store.filters()"
@@ -96,9 +96,15 @@ import type { CatalogFilters } from './catalog.store';
 
     h1 {
       margin: 0 0 0.5rem;
-      font: var(--mat-sys-headline-medium);
+      font-family: var(--app-font-display);
+      font-size: clamp(1.85rem, 4vw, 2.5rem);
       font-weight: 700;
-      letter-spacing: -0.02em;
+      letter-spacing: -0.03em;
+    }
+
+    h1 .app-gradient-text {
+      display: inline-block;
+      padding-bottom: 0.05em;
     }
 
     .summary {

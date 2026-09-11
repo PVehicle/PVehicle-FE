@@ -53,7 +53,7 @@ import { ParticleFieldComponent } from './particle-field.component';
 
         <h1 #title class="title">
           Chụp một tấm ảnh,<br />
-          biết ngay đó là xe gì
+          biết ngay <span class="app-gradient-text">đó là xe gì</span>
         </h1>
 
         <p #lede class="lede">
@@ -64,7 +64,8 @@ import { ParticleFieldComponent } from './particle-field.component';
 
         <div #actions class="actions">
           <a routerLink="/nhan-dien" class="app-btn app-btn--primary btn-lg">
-            Nhận diện xe ngay
+            <span>Nhận diện xe ngay</span>
+            <span class="btn-arrow" aria-hidden="true">→</span>
           </a>
           <a routerLink="/danh-muc" class="app-btn app-btn--ghost btn-lg">
             Xem danh mục
@@ -233,10 +234,18 @@ import { ParticleFieldComponent } from './particle-field.component';
 
     .title {
       margin: 0 0 1.25rem;
-      font-size: clamp(2.25rem, 6vw, 4rem);
-      line-height: 1.1;
-      font-weight: 750;
-      letter-spacing: -0.03em;
+      font-family: var(--app-font-display);
+      font-size: clamp(2.35rem, 6.5vw, 4.5rem);
+      line-height: 1.06;
+      font-weight: 700;
+      letter-spacing: -0.035em;
+    }
+
+    // SplitText cat chu thanh nhieu the; phai cho phep chu tran ra ngoai
+    // khung dong, neu khong phan duoi cua chu bi cat mat.
+    .title .app-gradient-text {
+      display: inline-block;
+      padding-bottom: 0.06em;
     }
 
     .lede {
@@ -256,9 +265,19 @@ import { ParticleFieldComponent } from './particle-field.component';
     }
 
     .btn-lg {
-      padding: 0.8rem 1.75rem;
+      padding: 0.85rem 1.85rem;
+      font-family: var(--app-font-display);
       font-size: 1rem;
+      font-weight: 600;
       text-decoration: none;
+    }
+
+    .btn-arrow {
+      transition: transform var(--app-duration) var(--app-spring);
+    }
+
+    .btn-lg:hover .btn-arrow {
+      transform: translateX(5px);
     }
 
     // --- So lieu ---------------------------------------------------------
