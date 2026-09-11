@@ -24,6 +24,7 @@ import { ParticleFieldComponent } from './particle-field.component';
       <div class="bg" aria-hidden="true">
         <span class="orb orb-1"></span>
         <span class="orb orb-2"></span>
+        <span class="orb orb-3"></span>
         <span class="grid-lines"></span>
         <app-particle-field />
 
@@ -115,24 +116,33 @@ import { ParticleFieldComponent } from './particle-field.component';
     .orb {
       position: absolute;
       border-radius: 50%;
-      filter: blur(70px);
-      opacity: 0.5;
+      filter: blur(90px);
+      opacity: 0.85;
     }
 
     .orb-1 {
-      top: -12%;
-      left: -8%;
-      width: 34rem;
-      height: 34rem;
-      background: color-mix(in srgb, var(--mat-sys-primary) 42%, transparent);
+      top: -18%;
+      left: -6%;
+      width: 38rem;
+      height: 38rem;
+      background: color-mix(in srgb, var(--mat-sys-primary) 60%, transparent);
     }
 
     .orb-2 {
-      right: -12%;
-      bottom: -18%;
-      width: 30rem;
-      height: 30rem;
-      background: color-mix(in srgb, var(--mat-sys-tertiary) 36%, transparent);
+      right: -10%;
+      top: 10%;
+      width: 32rem;
+      height: 32rem;
+      background: color-mix(in srgb, var(--mat-sys-tertiary) 52%, transparent);
+    }
+
+    // Khoi thu ba o duoi giup phan chan trang khong bi toi hoan toan.
+    .orb-3 {
+      left: 30%;
+      bottom: -22%;
+      width: 34rem;
+      height: 34rem;
+      background: color-mix(in srgb, var(--mat-sys-primary) 38%, transparent);
     }
 
     // Luoi mo dan ve phia duoi, tao cam giac chieu sau.
@@ -150,8 +160,9 @@ import { ParticleFieldComponent } from './particle-field.component';
           color-mix(in srgb, var(--mat-sys-on-surface) 6%, transparent) 1px,
           transparent 1px
         );
-      background-size: 3.5rem 3.5rem;
-      mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, #000, transparent);
+      background-size: 4rem 4rem;
+      opacity: 1.6;
+      mask-image: radial-gradient(ellipse 65% 55% at 50% 42%, #000, transparent);
     }
 
     // Mau hat, doc bang getComputedStyle trong component canvas.
@@ -163,35 +174,54 @@ import { ParticleFieldComponent } from './particle-field.component';
       );
     }
 
-    // --- Xe chay ngang ----------------------------------------------------
+    // --- Noi dung --------------------------------------------------------
 
-    .car-track {
-      position: absolute;
-      left: 0;
-      right: 0;
-      bottom: 8%;
-      width: 100%;
-      height: 7.5rem;
-      opacity: 0.28;
+    .content {
+      position: relative;
+      max-width: 52rem;
     }
 
-    .car-body {
-      fill: var(--mat-sys-primary);
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin: 0 0 1.5rem;
+      padding: 0.4rem 1rem;
+      border: 1px solid var(--mat-sys-outline-variant);
+      border-radius: var(--app-radius-pill);
+      background: color-mix(in srgb, var(--mat-sys-surface) 60%, transparent);
+      backdrop-filter: blur(8px);
+      color: var(--mat-sys-on-surface-variant);
+      font: var(--mat-sys-label-large);
     }
 
-    .car-glass {
-      fill: var(--mat-sys-surface);
+    .dot {
+      width: 0.45rem;
+      height: 0.45rem;
+      border-radius: 50%;
+      background: var(--mat-sys-primary);
+      animation: hero-blink 2s ease-in-out infinite;
     }
 
-    .car-wheel {
-      fill: var(--mat-sys-on-surface);
+    @keyframes hero-blink {
+      0%,
+      100% {
+        opacity: 1;
+      }
+      50% {
+        opacity: 0.3;
+      }
     }
 
-    .speed-lines line {
-      stroke: var(--mat-sys-primary);
-      stroke-width: 2.5;
-      stroke-linecap: round;
+    .title {
+      margin: 0 0 1.25rem;
+      font-family: var(--app-font-display);
+      font-size: clamp(2.35rem, 6.5vw, 4.5rem);
+      line-height: 1.06;
+      font-weight: 700;
+      letter-spacing: -0.035em;
     }
+
 
     // --- Noi dung --------------------------------------------------------
 
@@ -246,6 +276,20 @@ import { ParticleFieldComponent } from './particle-field.component';
     .title .app-gradient-text {
       display: inline-block;
       padding-bottom: 0.06em;
+    }
+
+    // SplitText boc tung ky tu vao mot the rieng, khien
+    // background-clip: text tren the cha khong con chu nao de cat - ket
+    // qua la mot khoi mau dac, chu bien mat. Phai cho chinh cac the ky tu
+    // mang chuyen sac. Class nay do charsClass khai bao, SplitText
+    // khong tu them neu khong noi ro.
+    .title .app-gradient-text .hero-char {
+      background-image: inherit;
+      background-size: inherit;
+      background-position: inherit;
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
     }
 
     .lede {
@@ -391,6 +435,7 @@ export class HeroComponent implements OnInit {
         const split = new SplitText(this.title().nativeElement, {
           type: 'lines,chars',
           linesClass: 'hero-line',
+          charsClass: 'hero-char',
         });
 
         split.lines.forEach((line) => {

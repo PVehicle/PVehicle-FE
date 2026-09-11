@@ -279,12 +279,14 @@ const SLIDE_LABELS = [
     }
 
     .dot-line {
-      width: 1.5rem;
-      height: 2px;
-      border-radius: 2px;
-      background: var(--mat-sys-outline-variant);
-      transform-origin: right;
-      transform: scaleX(0.55);
+      width: 0.5rem;
+      height: 0.5rem;
+      border-radius: 50%;
+      background: color-mix(
+        in srgb,
+        var(--mat-sys-on-surface) 30%,
+        transparent
+      );
       transition:
         transform var(--app-duration) var(--app-spring),
         background-color var(--app-duration) var(--app-ease);
@@ -292,7 +294,9 @@ const SLIDE_LABELS = [
 
     .slide-dot:hover .dot-line {
       background: var(--mat-sys-primary);
-      transform: scaleX(1);
+      transform: scale(1.5);
+      box-shadow: 0 0 0 4px
+        color-mix(in srgb, var(--mat-sys-primary) 20%, transparent);
     }
 
     // --- Bo cuc slide -----------------------------------------------------
@@ -319,9 +323,19 @@ const SLIDE_LABELS = [
       padding: 0;
     }
 
+    // Hero tu lo phan nen va can giua ben trong, nen phai cho no tran het
+    // chieu ngang. De nguyen max-width cua .slide-inner thi nen bi bo lai
+    // giua man hinh, lo ra hai vien toi hai ben.
+    #slide-0 .slide-inner {
+      max-width: none;
+    }
+
     .slide-inner {
       width: 100%;
       max-width: 68rem;
+      // place-items: center khong tu can giua mot khoi co width 100%
+      // kem max-width - phai co margin auto.
+      margin-inline: auto;
     }
 
     .slide-inner.narrow {
@@ -361,11 +375,6 @@ const SLIDE_LABELS = [
       letter-spacing: -0.032em;
     }
 
-    // Chu chuyen sac can dat inline-block de phan duoi khong bi cat.
-    h2 .app-gradient-text {
-      display: inline-block;
-      padding-bottom: 0.05em;
-    }
 
     .body {
       margin: 0 0 1.5rem;

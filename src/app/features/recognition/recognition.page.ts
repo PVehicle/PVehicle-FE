@@ -150,10 +150,6 @@ import { RecognitionStore } from './recognition.store';
       letter-spacing: -0.03em;
     }
 
-    h1 .app-gradient-text {
-      display: inline-block;
-      padding-bottom: 0.05em;
-    }
 
     .actions {
       display: flex;

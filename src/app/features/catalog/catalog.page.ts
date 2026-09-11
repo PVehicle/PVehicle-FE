@@ -102,10 +102,6 @@ import type { CatalogFilters } from './catalog.store';
       letter-spacing: -0.03em;
     }
 
-    h1 .app-gradient-text {
-      display: inline-block;
-      padding-bottom: 0.05em;
-    }
 
     .summary {
       margin: 0 0 1rem;

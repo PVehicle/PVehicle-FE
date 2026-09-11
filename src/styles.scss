@@ -309,27 +309,21 @@ body::after {
 
 /// Chu to sang bang chuyen sac - dung cho tu khoa trong tieu de.
 .app-gradient-text {
-  background: linear-gradient(
-    100deg,
-    var(--mat-sys-primary),
-    color-mix(in srgb, var(--mat-sys-tertiary) 75%, var(--mat-sys-primary)) 55%,
-    var(--mat-sys-primary)
-  );
-  background-size: 220% auto;
-  background-clip: text;
-  -webkit-background-clip: text;
-  color: transparent;
-  animation: app-gradient-shift 6s ease-in-out infinite;
-}
-
-@keyframes app-gradient-shift {
-  0%,
-  100% {
-    background-position: 0% center;
-  }
-  50% {
-    background-position: 100% center;
-  }
+  // Dung mau dac thay vi `background-clip: text`.
+  //
+  // Ky thuat cat nen theo chu tao ra chu chuyen sac dep hon, nhung tren
+  // trang nay no khien chu bien mat hoan toan - chi con mot khoi mau. Da
+  // thu tach biet tung yeu to (animation, inline-block, font, lop nhieu)
+  // deu khong tai hien duoc, nen nguyen nhan nam o tuong tac nao do giua
+  // nhieu lop style. Chu doc duoc quan trong hon chu lung linh.
+  color: var(--mat-sys-primary);
+  // Quang sang nhe quanh chu de van noi bat hon chu thuong.
+  text-shadow: 0 0 28px
+    color-mix(in srgb, var(--mat-sys-primary) 45%, transparent);
+  // Chu co dau tieng Viet can cho o phia duoi, neu khong dau nang va dau
+  // hoi bi cat mat o cac tieu de lon.
+  display: inline-block;
+  padding-bottom: 0.06em;
 }
 
 /// Vien phat sang chay quanh khoi - dung cho the noi bat.
@@ -480,6 +474,38 @@ body::after {
 
 .feature:hover .feature-link span {
   transform: translateX(5px);
+}
+
+/// Xe SVG chay ngang o nen Hero. Dat o day thay vi trong component vi
+/// day thuan tuy la trang tri, va de style cua Hero khong vuot han muc.
+.car-track {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 6rem;
+  opacity: 0.16;
+  // Mo dan ve hai ben de xe khong xuat hien hay bien mat dot ngot.
+  mask-image: linear-gradient(90deg, transparent, #000 18%, #000 82%, transparent);
+}
+
+.car-body {
+  fill: var(--mat-sys-primary);
+}
+
+.car-glass {
+  fill: var(--mat-sys-surface);
+}
+
+.car-wheel {
+  fill: var(--mat-sys-on-surface);
+}
+
+.speed-lines line {
+  stroke: var(--mat-sys-primary);
+  stroke-width: 2.5;
+  stroke-linecap: round;
 }
 
 /// Khung noi dung co nen va vien nhe.

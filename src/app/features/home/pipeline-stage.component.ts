@@ -60,9 +60,9 @@ import { gsap, registerGsap } from '../../core/gsap';
 
         <!-- Buoc 3: the ket qua -->
         <g class="result">
-          <rect x="96" y="96" width="228" height="72" rx="10" />
-          <text class="r-title" x="210" y="124">Honda Odyssey Minivan</text>
-          <text class="r-meta" x="210" y="148">709 triệu · 7 chỗ · 10,0 L</text>
+          <rect x="86" y="166" width="248" height="66" rx="12" />
+          <text class="r-title" x="210" y="193">Honda Odyssey Minivan</text>
+          <text class="r-meta" x="210" y="215">709 triệu · 7 chỗ · 10,0 L</text>
         </g>
       </svg>
 
@@ -285,7 +285,7 @@ export class PipelineStageComponent implements OnInit {
           // Buoc 3: khung bao va mo hinh mo di, the ket qua hien len.
           .add(() => setStep(2))
           .to('.models, .bbox, .bbox-tag', { opacity: 0, duration: 0.4 })
-          .to('.vehicle', { opacity: 0.25, duration: 0.4 }, '<')
+          .to('.vehicle', { opacity: 0.12, scale: 0.9, transformOrigin: 'center top', duration: 0.4 }, '<')
           .fromTo(
             '.result',
             { opacity: 0, y: 18, scale: 0.95 },
